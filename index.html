@@ -2,276 +2,475 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Wish Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Birthday Wish Hub 💫</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Comic+Neue:wght@700&family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        h1 {
-            text-align: center;
-            color: #d4145a;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-        textarea {
-            height: 80px;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(45deg, #ff69b4, #ff99cc);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 18px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .link-box {
-            background: #f0f0f0;
-            padding: 15px;
-            border-radius: 10px;
-            word-break: break-all;
-            margin: 15px 0;
-        }
-        .contact-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 3px solid gold;
-        }
-        .contact-popup {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            display: none;
-        }
-        .photo-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .photo-grid img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-        video {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 10px;
-            margin: 10px 0;
-        }
-        audio {
-            width: 100%;
-            max-width: 400px;
-            margin: 10px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background: #ff69b4;
-            color: white;
-        }
-        a {
-            color: #ff69b4;
-            text-decoration: none;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Quicksand',sans-serif; overflow-x:hidden; color:#4a4a4a; min-height:100vh; }
+        .video-bg { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-2; filter:brightness(0.8); animation:slowZoom 20s infinite alternate; }
+        @keyframes slowZoom { from{ transform:scale(1); } to{ transform:scale(1.05); } }
+        .overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg, rgba(255,192,203,0.3), rgba(147,112,219,0.3)); z-index:-1; }
+        .floating-elements { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:5; overflow:hidden; }
+        .float-item { position:absolute; font-size:2rem; opacity:0.5; animation:simpleFloat 12s infinite ease-in-out; filter:drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
+        @keyframes simpleFloat { 0%{ transform:translate(0,100vh) rotate(0deg); opacity:0; } 20%{ opacity:0.8; transform:translate(15vw,80vh) rotate(15deg); } 50%{ transform:translate(40vw,50vh) rotate(30deg); } 80%{ opacity:0.8; transform:translate(70vw,20vh) rotate(15deg); } 100%{ transform:translate(90vw,-10vh) rotate(0deg); opacity:0; } }
+        .butterfly { font-size:2.2rem; animation:flutter 2s infinite alternate ease-in-out; }
+        @keyframes flutter { 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-8px) rotate(5deg); } }
+        .flower { font-size:1.8rem; animation:spin 12s infinite linear; }
+        @keyframes spin { from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+        .magic-sparkles { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+        .magic-sparkles::before, .magic-sparkles::after { content:''; position:absolute; width:100%; height:100%; background-image:radial-gradient(circle, white 1px, transparent 1px); background-size:50px 50px; animation:sparkleLayer 8s linear infinite; opacity:0.5; }
+        .magic-sparkles::after { animation-delay:-4s; transform:rotate(45deg); }
+        @keyframes sparkleLayer { 0%{ transform:translateY(0); } 100%{ transform:translateY(-50px); } }
+        .floating-hearts { position:fixed; width:100%; height:100%; pointer-events:none; z-index:2; }
+        .heart-float { position:absolute; font-size:1.5rem; color:rgba(255,105,180,0.6); animation:floatHeart var(--float-duration,6s) ease-in-out infinite; animation-delay:var(--delay,0s); }
+        @keyframes floatHeart { 0%{ transform:translate(0,100vh) rotate(0deg); } 100%{ transform:translate(var(--translate-x,0), -100vh) rotate(360deg); } }
+        .contact-float-btn { position:fixed; bottom:20px; right:20px; z-index:9999; }
+        .contact-float-btn button { background:linear-gradient(135deg,#a18cd1,#fbc2eb); color:#4a4a4a; border:none; width:45px; height:45px; border-radius:50%; font-size:20px; cursor:pointer; box-shadow:0 5px 20px rgba(147,112,219,0.4); border:2px solid rgba(255,255,255,0.8); transition:0.3s; display:flex; align-items:center; justify-content:center; }
+        .contact-float-btn button:hover { transform:scale(1.15); box-shadow:0 0 30px #9370db; }
+        .login-container { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; z-index:1; }
+        .login-btn { background:white; color:#333; padding:12px 30px; border-radius:30px; font-size:18px; border:none; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.2); transition:0.3s; display:inline-flex; align-items:center; gap:8px; }
+        .form-container { max-width:600px; margin:20px auto; background:rgba(255,255,255,0.9); padding:30px; border-radius:30px; box-shadow:0 15px 35px rgba(0,0,0,0.2); }
+        .form-group { margin-bottom:15px; }
+        .form-group label { display:block; font-weight:600; margin-bottom:5px; }
+        .form-group input, .form-group textarea { width:100%; padding:10px; border-radius:20px; border:1px solid #ddd; font-family:inherit; }
+        .form-group textarea { height:80px; }
+        .submit-btn { background:linear-gradient(45deg,#ff69b4,#ff99cc); color:white; border:none; padding:12px 30px; border-radius:30px; font-size:18px; cursor:pointer; width:100%; }
+        .logout-btn { background: #ccc; border: none; padding: 10px 20px; border-radius: 20px; margin-top: 10px; cursor: pointer; }
+        .countdown-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg, rgba(255,209,220,0.4), rgba(230,230,250,0.4)); backdrop-filter:blur(8px); z-index:1000; transition:1s; text-align:center; padding:20px; }
+        .countdown-screen.hide { opacity:0; visibility:hidden; }
+        .countdown-title { font-size:clamp(24px,5vw,40px); color:#fff; margin-bottom:20px; text-shadow:2px 2px 8px rgba(0,0,0,0.3); font-weight:600; letter-spacing:1px; }
+        .countdown-box { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
+        .count-item { background:rgba(255,255,255,0.3); padding:12px 15px; border-radius:20px; min-width:70px; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(5px); }
+        .count-number { font-size:clamp(28px,6vw,40px); font-weight:800; color:#fff; display:block; text-shadow:2px 2px 8px rgba(0,0,0,0.3); }
+        .count-label { font-size:12px; color:rgba(255,255,255,0.95); letter-spacing:1px; text-shadow:1px 1px 4px rgba(0,0,0,0.3); }
+        .countdown-message { font-size:clamp(16px,4vw,24px); color:#fff; margin-top:20px; font-weight:400; text-shadow:2px 2px 8px rgba(0,0,0,0.3); }
+        .greeting-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(-45deg,#fee9f7,#e8f5fe,#fef2e8,#f0ffe8); background-size:400% 400%; animation:gradientBG 15s ease infinite; z-index:900; padding:20px; text-align:center; }
+        .greeting-screen.show { display:flex; }
+        @keyframes gradientBG { 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
+        .greeting-screen h1 { font-family:'Bubblegum Sans',cursive; font-size:clamp(3rem,10vw,4.5rem); color:#d4145a; text-shadow:2px 2px 8px rgba(255,255,255,0.8); margin-bottom:2rem; animation:bounce 1s ease infinite; }
+        @keyframes bounce { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+        .greeting-text { font-size:1.5rem; color:#4b0082; margin-bottom:3rem; min-height:2em; text-shadow:1px 1px 4px rgba(255,255,255,0.8); font-weight:600; }
+        .enter-btn { padding:1rem 2rem; font-size:1.2rem; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; cursor:pointer; box-shadow:0 0 15px rgba(255,105,180,0.5); transition:transform 0.3s,box-shadow 0.3s; font-family:'Comic Neue',cursive; font-weight:700; text-shadow:1px 1px 2px rgba(0,0,0,0.3); }
+        .enter-btn:hover { transform:scale(1.1); box-shadow:0 0 25px rgba(255,105,180,0.7); }
+        .cake-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); z-index:800; padding:20px; text-align:center; }
+        .cake-screen.show { display:flex; }
+        .cake-container { background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); padding:30px 20px; border-radius:40px; border:1px solid rgba(255,255,255,0.3); max-width:500px; width:100%; box-shadow:0 15px 35px rgba(0,0,0,0.2); }
+        .cake-emoji { font-size:clamp(80px,18vw,110px); text-align:center; filter:drop-shadow(0 10px 20px rgba(255,105,180,0.4)); animation:softBounce 2s infinite; }
+        @keyframes softBounce { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+        .candles { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; margin:20px 0; min-height:80px; }
+        .candle { cursor:pointer; transition:0.2s; animation:flicker 0.5s infinite alternate; display:inline-block; font-size:clamp(30px,8vw,42px); filter:drop-shadow(0 0 8px gold); }
+        .candle.blown { opacity:0.2; filter:grayscale(1); pointer-events:none; animation:none; }
+        @keyframes flicker { from{ opacity:1; transform:scale(1); } to{ opacity:0.8; transform:scale(1.1); } }
+        .cake-status { font-size:clamp(16px,4vw,20px); color:white; margin:20px 0; padding:12px; border-radius:40px; background:rgba(0,0,0,0.5); backdrop-filter:blur(5px); text-shadow:1px 1px 4px rgba(0,0,0,0.5); }
+        .cut-btn { background:linear-gradient(45deg,gold,red); color:black; font-size:clamp(20px,5vw,24px); padding:12px 25px; border:none; border-radius:40px; font-weight:bold; cursor:pointer; transition:0.3s; border:2px solid white; width:100%; box-shadow:0 8px 15px rgba(0,0,0,0.3); text-shadow:1px 1px 2px rgba(255,255,255,0.5); }
+        .cut-btn:disabled { opacity:0.3; cursor:not-allowed; }
+        .cut-btn:not(:disabled):hover { transform:scale(1.05); box-shadow:0 0 25px gold; }
+        .cake-next-btn { margin-top:20px; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(155,109,255,0.4); transition:0.3s; display:inline-block; border:2px solid white; }
+        .reasons-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(-45deg,#ffe6e6,#e6e6ff,#ffebf5); background-size:400% 400%; animation:gradientBG 15s ease infinite; z-index:750; padding:20px; }
+        .reasons-screen.show { display:flex; }
+        .reasons-header h1 { font-family:'Bubblegum Sans',cursive; font-size:clamp(2.5rem,8vw,3.5rem); color:#ff69b4; text-shadow:2px 2px 4px rgba(255,105,180,0.3); margin-bottom:2rem; animation:bounce 1s ease infinite; text-align:center; }
+        .reasons-container { width:100%; max-width:1000px; margin:0 auto; min-height:300px; display:flex; justify-content:center; align-items:center; }
+        .reason-card { background:rgba(255,255,255,0.95); border-radius:20px; padding:2rem; box-shadow:0 10px 30px rgba(0,0,0,0.15); text-align:center; max-width:950px; width:100%; transition:transform 0.3s,box-shadow 0.3s; cursor:pointer; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.3); }
+        .reason-card:hover { transform:translateY(-5px); box-shadow:0 15px 35px rgba(255,105,180,0.2); }
+        .reason-text { font-size:1.2rem; line-height:1.4; color:#4a4a4a; margin-bottom:1rem; font-weight:500; }
+        .reason-emoji { font-size:2.5rem; }
+        .reason-counter { font-size:1rem; color:#ff69b4; margin:20px 0 15px; font-weight:600; opacity:0.8; }
+        .reasons-btn { background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; padding:1rem 2rem; font-size:1.2rem; color:white; cursor:pointer; transition:all 0.3s; font-family:'Comic Neue',cursive; box-shadow:0 5px 15px rgba(255,105,180,0.3); border:2px solid rgba(255,255,255,0.8); min-width:200px; font-weight:700; }
+        .reasons-btn:hover { transform:scale(1.1); box-shadow:0 8px 25px rgba(255,105,180,0.6); }
+        .reasons-btn.story-mode { background:linear-gradient(45deg,#9b6dff,#ff6dc7); transform:scale(1.1); animation:pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{ transform:scale(1.1); } 50%{ transform:scale(1.2); } }
+        .photo-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; overflow-y:auto; background:linear-gradient(135deg,#ffd1dc 0%,#e6e6fa 25%,#ffefd5 50%,#e6e6fa 75%,#ffd1dc 100%); background-size:400% 400%; animation:gradientFlow 15s ease infinite; z-index:700; padding:80px 20px 40px; }
+        .photo-screen.show { display:block; }
+        @keyframes gradientFlow { 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
+        .photo-header h1 { font-family:'Dancing Script',cursive; font-size:3rem; color:#b0306e; text-shadow:2px 2px 8px rgba(255,255,255,0.8); margin-bottom:1rem; text-align:center; }
+        .photo-header p { font-size:1.2rem; max-width:600px; margin:0 auto 2rem; line-height:1.6; color:#2c3e50; font-weight:600; text-shadow:1px 1px 4px rgba(255,255,255,0.8); text-align:center; }
+        .photo-container { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:2rem; }
+        .photo-card { background:rgba(255,255,255,0.9); border-radius:20px; padding:1.5rem; box-shadow:0 10px 20px rgba(0,0,0,0.1); transition:all 0.5s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden; cursor:pointer; }
+        .photo-card:hover { transform:translateY(-10px) scale(1.02); box-shadow:0 15px 30px rgba(0,0,0,0.15); }
+        .photo-img { width:100%; height:250px; object-fit:cover; border-radius:15px; margin-bottom:1rem; }
+        .photo-date { font-family:'Dancing Script',cursive; color:#c71585; font-size:1.3rem; margin-bottom:0.5rem; font-weight:700; }
+        .photo-caption { font-size:1rem; line-height:1.5; color:#2c3e50; font-weight:500; }
+        .photo-next-btn { display:block; margin:30px auto; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(155,109,255,0.4); transition:0.3s; border:2px solid white; text-align:center; max-width:300px; }
+        .video-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; overflow-y:auto; background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%); z-index:600; padding:60px 20px 40px; }
+        .video-screen.show { display:flex; }
+        .video-screen h2 { font-family:'Dancing Script',cursive; font-size:2.5rem; color:#b0306e; text-shadow:2px 2px 8px rgba(255,255,255,0.8); margin-bottom:2rem; text-align:center; }
+        .video-container { max-width:1200px; width:100%; margin:0 auto; }
+        .video-grid { display:grid; grid-template-columns:1fr; gap:30px; }
+        @media (min-width:768px) { .video-grid { grid-template-columns:repeat(2,1fr); } }
+        .video-card { background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); border-radius:20px; padding:20px; border:2px solid rgba(255,255,255,0.3); }
+        .video-card h3 { font-size:1.3rem; color:#d4145a; margin-bottom:15px; text-align:center; }
+        .video-wrapper { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
+        .video-wrapper video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
+        .video-next-btn { display:block; margin:40px auto 20px; padding:12px 30px; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(255,105,180,0.4); transition:0.3s; border:2px solid white; max-width:300px; }
+        .letter-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#fdfbfb 0%,#ebedee 100%); z-index:500; padding:20px; }
+        .letter-screen.show { display:flex; }
+        .letter-container { max-width:600px; background:rgba(255,255,255,0.9); padding:2rem; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); text-align:center; }
+        .letter-container h2 { font-family:'Dancing Script',cursive; font-size:2.5rem; color:#b0306e; margin-bottom:1rem; }
+        .letter-content { font-size:1.2rem; line-height:1.8; color:#2c3e50; font-weight:500; white-space:pre-line; }
+        .letter-return-btn { margin-top:20px; padding:12px 30px; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(255,105,180,0.4); transition:0.3s; border:2px solid white; display:inline-block; text-decoration:none; }
+        .secret-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#ffe6f0,#ffe0f0); z-index:550; padding:20px; }
+        .secret-screen.show { display:flex; }
+        .secret-container { max-width:600px; width:100%; background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); padding:2rem; border-radius:40px; box-shadow:0 20px 40px rgba(0,0,0,0.3); text-align:center; border:2px solid white; }
+        .secret-photo { width:100%; max-height:400px; object-fit:cover; border-radius:30px; box-shadow:0 15px 30px rgba(0,0,0,0.3); cursor:pointer; transition:transform 0.3s; border:3px solid white; animation:photoReveal 0.8s ease-out; }
+        .secret-photo:hover { transform:scale(1.02); }
+        @keyframes photoReveal { 0%{ opacity:0; transform:scale(0.8); } 100%{ opacity:1; transform:scale(1); } }
+        .soulmate-btn { margin-top:30px; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(155,109,255,0.4); transition:0.3s; border:2px solid white; display:inline-block; text-decoration:none; }
+        .lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10001; justify-content:center; align-items:center; padding:20px; }
+        .lightbox.show { display:flex; }
+        .lightbox img { max-width:90%; max-height:90%; border-radius:10px; border:3px solid white; box-shadow:0 0 50px rgba(255,255,255,0.3); }
+        .lightbox .close { position:absolute; top:20px; right:30px; font-size:40px; color:white; cursor:pointer; }
+        .admin-table { width:100%; border-collapse:collapse; margin-top:20px; }
+        .admin-table th { background:#ff69b4; color:white; padding:10px; }
+        .admin-table td { padding:10px; border:1px solid #ddd; }
     </style>
 </head>
 <body>
 
-    <div id="app"></div>
+    <div class="floating-elements" id="floatingElements"></div>
+    <div class="magic-sparkles"></div>
+    <div class="floating-hearts" id="floatingHearts"></div>
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <span class="close">&times;</span>
+        <img src="" id="lightboxImg">
+    </div>
+
+    <div id="root"></div>
 
     <script>
+        // ============== CONFIGURATION ==============
+        const firebaseConfig = {
+            apiKey: "AIzaSyC18r8GPtooLmUBnOGRBQUIKOodPvHRX8o",
+            authDomain: "birthday-website-33f71.firebaseapp.com",
+            projectId: "birthday-website-33f71",
+            storageBucket: "birthday-website-33f71.firebasestorage.app",
+            messagingSenderId: "800374135757",
+            appId: "1:800374135757:web:2b4a058f708972e3e10284",
+            measurementId: "G-T3JH3J4N87"
+        };
+        const CLOUDINARY_CLOUD_NAME = "dpctt0wao";
+        const CLOUDINARY_UPLOAD_PRESET = "birthday_upload";
+        const ADMIN_CONTACT = {
+            photo: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg",
+            facebook: "https://www.facebook.com/rafahimn",
+            instagram: "https://www.instagram.com/rafahimn"
+        };
         const ADMIN_PASSWORD = "admin123";
-        const CONTACT_PHOTO = "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg";
-        const FB_LINK = "https://www.facebook.com/rafahimn";
-        const IG_LINK = "https://www.instagram.com/rafahimn";
 
-        function getWishes() {
-            return JSON.parse(localStorage.getItem('birthday_wishes') || '[]');
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ============== HELPER FUNCTIONS ==============
+        function floatElements() {
+            setInterval(() => {
+                const c = document.getElementById('floatingElements');
+                if (!c) return;
+                const el = document.createElement('div');
+                el.className = 'float-item ' + (Math.random() > 0.5 ? 'butterfly' : 'flower');
+                el.textContent = ['🦋', '🌸', '🌼', '🌺'][Math.floor(Math.random() * 4)];
+                el.style.left = Math.random() * 100 + '%';
+                el.style.animationDelay = Math.random() * 5 + 's';
+                el.style.fontSize = (Math.random() * 1.5 + 1.5) + 'rem';
+                c.appendChild(el);
+                setTimeout(() => el.remove(), 15000);
+            }, 2000);
         }
 
-        function saveWish(data) {
-            const wishes = getWishes();
-            const id = Date.now().toString(36);
-            wishes.push({ id, ...data, created: new Date().toISOString() });
-            localStorage.setItem('birthday_wishes', JSON.stringify(wishes));
-            return id;
+        function floatHearts() {
+            setInterval(() => {
+                const c = document.getElementById('floatingHearts');
+                if (!c) return;
+                const h = document.createElement('div');
+                h.className = 'heart-float';
+                h.textContent = ['💖', '💝', '💗', '💓', '💕'][Math.floor(Math.random() * 5)];
+                h.style.left = Math.random() * 100 + '%';
+                h.style.setProperty('--float-duration', (Math.random() * 4 + 4) + 's');
+                h.style.setProperty('--delay', Math.random() * 3 + 's');
+                h.style.setProperty('--translate-x', (Math.random() * 60 - 30) + 'px');
+                c.appendChild(h);
+                setTimeout(() => h.remove(), 8000);
+            }, 800);
         }
 
-        function getWish(id) {
-            return getWishes().find(w => w.id === id);
+        function openLightbox(src) {
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightbox').classList.add('show');
+        }
+        window.closeLightbox = (e) => {
+            if (e.target === document.getElementById('lightbox') || e.target.classList.contains('close'))
+                document.getElementById('lightbox').classList.remove('show');
+        };
+
+        function uploadFile(cb) {
+            window.cloudinary.openUploadWidget({
+                cloudName: CLOUDINARY_CLOUD_NAME,
+                uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+                sources: ['local', 'url', 'camera'],
+                multiple: false,
+            }, (err, res) => {
+                if (!err && res && res.event === 'success') cb(res.info.secure_url);
+            });
         }
 
-        function showPage() {
-            const hash = window.location.hash.slice(1) || 'home';
-            const app = document.getElementById('app');
+        function navigate(hash) {
+            window.location.hash = hash;
+        }
 
-            if (hash === 'home') {
-                app.innerHTML = `
-                    <div class="container">
-                        <h1>🎂 Create Birthday Wish</h1>
-                        <input id="bname" placeholder="Birthday Person Name *">
-                        <input id="bdate" type="date">
-                        <input id="btime" type="time" value="00:00">
-                        <input id="bage" type="number" placeholder="Age (candles)" value="18">
-                        <textarea id="bgreeting" placeholder="Greeting Message"></textarea>
-                        <textarea id="breasons" placeholder="Reasons (one per line)"></textarea>
-                        <textarea id="bphotos" placeholder="Photo URLs (one per line, url|caption)"></textarea>
-                        <textarea id="bvideos" placeholder="Video URLs (one per line)"></textarea>
-                        <input id="baudio" placeholder="Audio URL">
-                        <textarea id="bletter" placeholder="Love Letter"></textarea>
-                        <button onclick="createWish()">✨ Create My Wish Page ✨</button>
-                        <p style="text-align:center;margin-top:15px;"><a href="#admin">Admin Panel</a></p>
+        function ContactButton() {
+            const btn = document.createElement('div');
+            btn.className = 'contact-float-btn';
+            btn.innerHTML = `<button onclick="toggleContactPopup()"><i class="fas fa-comment"></i></button>`;
+            const popup = document.createElement('div');
+            popup.id = 'contactPopup';
+            popup.style.cssText = 'display:none;position:fixed;bottom:80px;right:20px;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:20px;padding:20px;z-index:10000;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.2);';
+            popup.innerHTML = `
+                <p><b>Contact</b></p>
+                <a href="${ADMIN_CONTACT.facebook}" target="_blank" style="display:block;margin:5px 0;"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="${ADMIN_CONTACT.instagram}" target="_blank" style="display:block;margin:5px 0;"><i class="fab fa-instagram"></i> Instagram</a>
+                <button onclick="toggleContactPopup()" style="margin-top:10px;padding:5px 15px;border-radius:15px;border:1px solid #ccc;background:white;cursor:pointer;">Close</button>
+            `;
+            document.body.appendChild(btn);
+            document.body.appendChild(popup);
+        }
+
+        window.toggleContactPopup = function () {
+            const p = document.getElementById('contactPopup');
+            if (p) p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        };
+
+        // ============== APP LOGIC ==============
+        floatElements();
+        floatHearts();
+        ContactButton();
+
+        function handleRoute() {
+            const hash = window.location.hash.slice(1) || '/';
+            const root = document.getElementById('root');
+
+            if (hash === '/') {
+                root.innerHTML = `
+                    <video class="video-bg" autoplay muted loop playsinline>
+                        <source src="https://assets.mixkit.co/videos/preview/mixkit-candles-in-the-dark-1327-large.mp4" type="video/mp4">
+                    </video>
+                    <div class="overlay"></div>
+                    <div class="login-container">
+                        <h1 style='color:white;margin-bottom:20px;'>Create Your Own Birthday Wish Page</h1>
+                        <button class="login-btn" onclick="loginWithGoogle()">
+                            <i class="fab fa-google"></i> Login with Google
+                        </button>
                     </div>
-                    ${contactButton()}
                 `;
             }
-            else if (hash.startsWith('wish/')) {
-                const id = hash.split('wish/')[1];
-                const wish = getWish(id);
-                if (!wish) {
-                    app.innerHTML = '<div class="container"><h1>Wish Not Found</h1><p><a href="#home">Create Your Own</a></p></div>';
-                    return;
-                }
-                let html = `<div class="container">
-                    <h1>🎂 Happy Birthday ${wish.name} ❤️</h1>`;
-                if (wish.greeting) html += `<p style="font-size:18px;">${wish.greeting}</p>`;
-                
-                if (wish.photos) {
-                    html += '<div class="photo-grid">';
-                    wish.photos.split('\n').filter(p => p.trim()).forEach(p => {
-                        const [url, cap] = p.split('|');
-                        html += `<div><img src="${url.trim()}" alt="${cap||''}"><br><small>${cap||''}</small></div>`;
-                    });
-                    html += '</div>';
-                }
-                
-                if (wish.videos) {
-                    wish.videos.split('\n').filter(v => v.trim()).forEach(v => {
-                        html += `<video controls><source src="${v.trim()}"></video>`;
-                    });
-                }
-                
-                if (wish.audio) html += `<audio controls><source src="${wish.audio}"></audio>`;
-                
-                if (wish.reasons) {
-                    html += '<ul>';
-                    wish.reasons.split('\n').filter(r => r.trim()).forEach(r => html += `<li>${r}</li>`);
-                    html += '</ul>';
-                }
-                
-                if (wish.letter) html += `<div style="background:#fff0f5;padding:20px;border-radius:10px;white-space:pre-line;">${wish.letter}</div>`;
-                
-                html += `<p style="text-align:center;margin-top:20px;"><a href="#home">Create Your Own Wish</a></p></div>${contactButton()}`;
-                app.innerHTML = html;
+            else if (hash === '/dashboard') {
+                if (!auth.currentUser) { navigate('/'); return; }
+                root.innerHTML = `
+                    <div style="padding:20px;max-width:800px;margin:0 auto;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <h1>Customize Your Wish Page</h1>
+                            <div>
+                                <button class="logout-btn" style="margin-right:10px;" onclick="navigate('/admin')">Admin</button>
+                                <button class="logout-btn" onclick="logout()">Logout</button>
+                            </div>
+                        </div>
+                        <div class="form-container">
+                            ${formHTML()}
+                            <button class="submit-btn" onclick="createWish()">✨ Create My Wish Page ✨</button>
+                        </div>
+                    </div>
+                `;
+                window._formData = {
+                    birthdayName: '', month: 2, day: 15, hour: 0, minute: 0, age: 17,
+                    greetingText: '', reasons: [{ text: '', emoji: '💖' }, { text: '', emoji: '💗' }, { text: '', emoji: '💕' }, { text: '', emoji: '🌟' }],
+                    photos: [], videos: [], countdownAudio: '', wishAudio: '', letter: '', secretPhoto: ''
+                };
             }
-            else if (hash === 'admin') {
-                const pw = prompt("Admin Password:");
-                if (pw !== ADMIN_PASSWORD) {
-                    app.innerHTML = '<div class="container"><h1>Wrong Password</h1><p><a href="#home">Back</a></p></div>';
-                    return;
-                }
-                const wishes = getWishes();
-                let html = '<div class="container"><h1>Admin Panel</h1><p>Total: ' + wishes.length + '</p><table><tr><th>#</th><th>Name</th><th>Date</th><th>Link</th></tr>';
-                wishes.forEach((w, i) => {
-                    html += `<tr><td>${i+1}</td><td>${w.name}</td><td>${new Date(w.created).toLocaleDateString()}</td><td><a href="#wish/${w.id}" target="_blank">Open 🔗</a></td></tr>`;
+            else if (hash.startsWith('/wish/')) {
+                const id = hash.split('/wish/')[1];
+                db.collection('wishes').doc(id).get().then(doc => {
+                    if (doc.exists) renderWish(doc.data());
+                    else root.innerHTML = '<div style="text-align:center;margin-top:100px;">Wish not found</div>';
                 });
-                html += '</table><p><a href="#home">Create New</a></p></div>';
-                app.innerHTML = html;
             }
-            else {
-                app.innerHTML = '<div class="container"><h1>Page Not Found</h1><p><a href="#home">Go Home</a></p></div>';
+            else if (hash === '/admin') {
+                root.innerHTML = `<div style="max-width:400px;margin:100px auto;text-align:center;">
+                    <h2>Admin Login</h2>
+                    <input id="adminPw" type="password" placeholder="Password" style="width:100%;padding:10px;border-radius:20px;border:1px solid #ccc;margin:10px 0;">
+                    <button onclick="checkAdmin()" style="padding:10px 25px;background:#ff69b4;color:white;border:none;border-radius:20px;cursor:pointer;">Login</button>
+                </div>`;
             }
         }
 
-        function contactButton() {
+        function formHTML() {
             return `
-                <img src="${CONTACT_PHOTO}" class="contact-btn" onclick="toggleContact()" alt="Contact">
-                <div class="contact-popup" id="contactPopup">
-                    <p><b>Contact Creator</b></p>
-                    <p><a href="${FB_LINK}" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></p>
-                    <p><a href="${IG_LINK}" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></p>
-                    <button onclick="toggleContact()">Close</button>
-                </div>
+                <div class="form-group"><label>Birthday Person's Name *</label><input id="fname" onchange="updateF('birthdayName',this.value)"></div>
+                <div class="form-group"><label>Birth Date</label><input type="date" onchange="updateDate(this.value)"><input type="time" onchange="updateTime(this.value)"></div>
+                <div class="form-group"><label>Age (Candles)</label><input type="number" value="17" onchange="updateF('age',parseInt(this.value)||17)"></div>
+                <div class="form-group"><label>Greeting Message</label><textarea onchange="updateF('greetingText',this.value)"></textarea></div>
+                <div class="form-group"><label>4 Reasons</label>${[0,1,2,3].map(i => `<div style="display:flex;gap:5px;margin-bottom:5px;"><input style="width:50px;" onchange="updateReason(${i},'emoji',this.value)"><input style="flex:1;" onchange="updateReason(${i},'text',this.value)"></div>`).join('')}</div>
+                <div class="form-group"><label>Photos</label><button type="button" onclick="uploadFile(u => {window._formData.photos.push({url:u,date:'Memory',caption:''});refreshUploads();})">📸 Upload</button><div id="photoPreviews"></div></div>
+                <div class="form-group"><label>Videos</label><button type="button" onclick="uploadFile(u => {window._formData.videos.push({url:u,title:'Video'});refreshUploads();})">🎥 Upload</button><div id="videoPreviews"></div></div>
+                <div class="form-group"><label>Countdown Audio</label><button type="button" onclick="uploadFile(u => {window._formData.countdownAudio=u;refreshUploads();})">🎵 Upload</button></div>
+                <div class="form-group"><label>Wish Audio</label><button type="button" onclick="uploadFile(u => {window._formData.wishAudio=u;refreshUploads();})">🎶 Upload</button></div>
+                <div class="form-group"><label>Love Letter</label><textarea onchange="updateF('letter',this.value)"></textarea></div>
+                <div class="form-group"><label>Secret Photo</label><button type="button" onclick="uploadFile(u => {window._formData.secretPhoto=u;refreshUploads();})">🖼️ Upload</button></div>
             `;
         }
 
-        function toggleContact() {
-            const popup = document.getElementById('contactPopup');
-            if (popup) popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+        window.updateF = (key, val) => { window._formData[key] = val; };
+        window.updateDate = (v) => { const d = new Date(v); window._formData.month = d.getMonth(); window._formData.day = d.getDate(); };
+        window.updateTime = (v) => { const [h, m] = v.split(':'); window._formData.hour = parseInt(h) || 0; window._formData.minute = parseInt(m) || 0; };
+        window.updateReason = (i, key, val) => { window._formData.reasons[i][key] = val; };
+        window.refreshUploads = () => {
+            const pp = document.getElementById('photoPreviews');
+            const vp = document.getElementById('videoPreviews');
+            if (pp) pp.innerHTML = window._formData.photos.map((p, i) => `<span>Photo ${i + 1} ✅</span>`).join(' ');
+            if (vp) vp.innerHTML = window._formData.videos.map((v, i) => `<span>Video ${i + 1} ✅</span>`).join(' ');
+        };
+
+        window.loginWithGoogle = async () => {
+            try {
+                await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+                navigate('/dashboard');
+            } catch (e) { alert('Login failed: ' + e.message); }
+        };
+
+        window.logout = () => { auth.signOut(); navigate('/'); };
+
+        window.createWish = async () => {
+            const f = window._formData;
+            if (!f.birthdayName.trim()) return alert('Enter name');
+            try {
+                const id = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+                await db.collection('wishes').doc(id).set({
+                    ...f,
+                    userId: auth.currentUser.uid,
+                    userEmail: auth.currentUser.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert('✅ Wish Created! Link: ' + window.location.origin + window.location.pathname + '#/wish/' + id);
+                navigate('/wish/' + id);
+            } catch (e) { alert('Error: ' + e.message); }
+        };
+
+        window.checkAdmin = () => {
+            if (document.getElementById('adminPw').value === ADMIN_PASSWORD) {
+                db.collection('wishes').orderBy('createdAt', 'desc').get().then(snap => {
+                    const arr = [];
+                    snap.forEach(d => arr.push({ id: d.id, ...d.data() }));
+                    let html = '<div style="padding:20px;"><h1>Admin Panel</h1><table class="admin-table"><tr><th>#</th><th>Name</th><th>By</th><th>Link</th></tr>';
+                    arr.forEach((w, i) => html += `<tr><td>${i + 1}</td><td>${w.birthdayName}</td><td>${w.userEmail || '?'}</td><td><a href="#/wish/${w.id}" target="_blank">Open</a></td></tr>`);
+                    html += '</table></div>';
+                    document.getElementById('root').innerHTML = html;
+                });
+            } else alert('Wrong password');
+        };
+
+        function renderWish(data) {
+            const root = document.getElementById('root');
+            let step = 0;
+            const screens = ['countdown', 'greeting', 'cake', 'reasons', 'photo', 'video', 'letter', 'secret'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            function showScreen(n) {
+                step = n;
+                const s = screens[n];
+                root.innerHTML = '';
+                if (s === 'countdown') renderCountdown();
+                else if (s === 'greeting') renderGreeting();
+                else if (s === 'cake') renderCake();
+                else if (s === 'reasons') renderReasons();
+                else if (s === 'photo') renderPhotos();
+                else if (s === 'video') renderVideos();
+                else if (s === 'letter') renderLetter();
+                else if (s === 'secret') renderSecret();
+            }
+
+            function renderCountdown() {
+                root.innerHTML = `<div class="countdown-screen" style="display:flex;"><h1 class="countdown-title">⌛ Countdown...</h1><div class="countdown-box">${['Days','Hours','Mins','Secs'].map(l => `<div class="count-item"><span class="count-number" id="c${l}">00</span><span class="count-label">${l}</span></div>`).join('')}</div><div class="countdown-message">⏰ ${data.day} ${months[data.month]} ${data.hour}:${String(data.minute).padStart(2, '0')}</div></div>`;
+                const int = setInterval(() => {
+                    const now = new Date();
+                    const bd = new Date(now.getFullYear(), data.month, data.day, data.hour, data.minute);
+                    if (now >= bd) { clearInterval(int); showScreen(1); return; }
+                    const diff = bd - now;
+                    document.getElementById('cDays').textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
+                    document.getElementById('cHours').textContent = String(Math.floor((diff / 3600000) % 24)).padStart(2, '0');
+                    document.getElementById('cMins').textContent = String(Math.floor((diff / 60000) % 60)).padStart(2, '0');
+                    document.getElementById('cSecs').textContent = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+                }, 1000);
+            }
+
+            function renderGreeting() {
+                root.innerHTML = `<div class="greeting-screen show"><h1>Happy Birthday ${data.birthdayName} ❤️🎂💫</h1><div class="greeting-text">${data.greetingText}</div><button class="enter-btn" onclick="(${showScreen.toString()})(2)">Enter 💕</button></div>`;
+                if (window.confetti) confetti({ particleCount: 100, spread: 70 });
+            }
+
+            function renderCake() {
+                let cut = false, blown = 0;
+                const total = data.age || 17;
+                function draw() {
+                    root.querySelector('.cake-container').innerHTML = `
+                        <div class="cake-emoji">${cut ? '🍰' : '🎂'}</div>
+                        <div class="candles">${Array.from({ length: total }).map((_, i) => `<span class="candle ${i < blown ? 'blown' : ''}" onclick="(${(i) => { if (!cut && i >= blown) { blown = i + 1; draw(); if (blown === total && window.confetti) confetti({ particleCount: 100, spread: 70 }); } }})(...)">🕯️</span>`).join('')}</div>
+                        <div class="cake-status">${cut ? '🎉 Cake cut! 🎉' : `${total - blown} candles burning`}</div>
+                        ${!cut ? `<button class="cut-btn" ${blown !== total ? 'disabled' : ''} onclick="(${() => { cut = true; draw(); if (window.confetti) confetti({ particleCount: 150, spread: 80 }); }})()">🍰 Cut Cake</button>` : `<button class="cake-next-btn" onclick="(${showScreen.toString()})(3)">Enter storyline 💫</button>`}
+                    `;
+                }
+                root.innerHTML = `<div class="cake-screen show"><div class="cake-container"></div></div>`;
+                draw();
+            }
+
+            function renderReasons() {
+                let idx = 0;
+                const reasons = data.reasons?.filter(r => r.text.trim()) || [{ text: 'You are amazing!', emoji: '💖' }];
+                function draw() {
+                    const r = reasons[idx];
+                    root.innerHTML = `<div class="reasons-screen show">
+                        <div class="reasons-header"><h1>Happy Birthday ${data.birthdayName}.. 💖</h1></div>
+                        <div class="reasons-container"><div class="reason-card"><div class="reason-text">${r.emoji} ${r.text}</div><div class="reason-emoji">${r.emoji}</div></div></div>
+                        <div class="reason-counter">Reason ${idx + 1} of ${reasons.length}</div>
+                        <button class="reasons-btn ${idx === reasons.length - 1 ? 'story-mode' : ''}" onclick="(${(n) => { if (n === reasons.length - 1) showScreen(4); else { idx = n + 1; draw(); } }})(...)">${idx === reasons.length - 1 ? "You're the BESTEST ! 💖" : "Click Here... 💕"}</button>
+                    </div>`;
+                }
+                draw();
+            }
+
+            function renderPhotos() {
+                root.innerHTML = `<div class="photo-screen show">
+                    <div class="photo-header"><h1>Our Beautiful Moments Together</h1></div>
+                    <div class="photo-container">${(data.photos || []).map(p => `<div class="photo-card" onclick="openLightbox('${p.url}')"><img src="${p.url}" class="photo-img"><div class="photo-date">${p.date}</div><div class="photo-caption">${p.caption}</div></div>`).join('')}</div>
+                    <button class="photo-next-btn" onclick="(${showScreen.toString()})(5)">Again Your Storylane 🎥</button>
+                </div>`;
+            }
+
+            function renderVideos() {
+                root.innerHTML = `<div class="video-screen show">
+                    <h2>A Special Video Message</h2>
+                    <div class="video-container"><div class="video-grid">${(data.videos || []).map(v => `<div class="video-card"><h3>${v.title}</h3><div class="video-wrapper"><video controls><source src="${v.url}" type="video/mp4"></video></div></div>`).join('')}</div>
+                    <button class="video-next-btn" onclick="(${showScreen.toString()})(6)">See your letter 💌</button></div>
+                </div>`;
+            }
+
+            function renderLetter() {
+                root.innerHTML = `<div class="letter-screen show"><div class="letter-container"><h2>A Letter for You Babiee 💌</h2><div class="letter-content">${data.letter}</div><button class="letter-return-btn" onclick="(${showScreen.toString()})(7)">Again,Happy Birthday My Honey</button></div></div>`;
+            }
+
+            function renderSecret() {
+                root.innerHTML = `<div class="secret-screen show"><div class="secret-container"><img src="${data.secretPhoto}" class="secret-photo" onclick="openLightbox('${data.secretPhoto}')"><button class="soulmate-btn" onclick="window.open('${ADMIN_CONTACT.instagram}', '_blank')"><i class="fab fa-instagram"></i> See Your Soulmate</button></div></div>`;
+            }
+
+            showScreen(0);
         }
 
-        function createWish() {
-            const name = document.getElementById('bname').value.trim();
-            if (!name) { alert('Please enter birthday person name'); return; }
-            
-            const dateVal = document.getElementById('bdate').value;
-            const timeVal = document.getElementById('btime').value;
-            let month = 2, day = 15, hour = 0, minute = 0;
-            if (dateVal) { const d = new Date(dateVal); month = d.getMonth(); day = d.getDate(); }
-            if (timeVal) { const [h, m] = timeVal.split(':'); hour = parseInt(h)||0; minute = parseInt(m)||0; }
-            
-            const data = {
-                name: name,
-                month, day, hour, minute,
-                age: parseInt(document.getElementById('bage').value) || 18,
-                greeting: document.getElementById('bgreeting').value,
-                reasons: document.getElementById('breasons').value,
-                photos: document.getElementById('bphotos').value,
-                videos: document.getElementById('bvideos').value,
-                audio: document.getElementById('baudio').value,
-                letter: document.getElementById('bletter').value
-            };
-            
-            const id = saveWish(data);
-            const link = window.location.origin + window.location.pathname + '#wish/' + id;
-            alert('✅ Wish page created!\n\nLink: ' + link);
-            window.location.hash = 'wish/' + id;
-        }
-
-        window.addEventListener('hashchange', showPage);
-        window.addEventListener('load', showPage);
+        window.addEventListener('hashchange', handleRoute);
+        window.addEventListener('load', handleRoute);
     </script>
 </body>
 </html>
