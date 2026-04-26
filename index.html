@@ -1,200 +1,277 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Wish Hub 💫</title>
+    <title>Birthday Wish Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:Arial,sans-serif; background:linear-gradient(135deg,#ff9a9e,#fad0c4); min-height:100vh; display:flex; align-items:center; justify-content:center; }
-        .container { background:white; padding:40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.2); max-width:500px; width:90%; text-align:center; }
-        h1 { color:#d4145a; margin-bottom:20px; }
-        input, textarea { width:100%; padding:12px; margin:8px 0; border-radius:10px; border:1px solid #ddd; font-size:16px; }
-        button { background:linear-gradient(45deg,#ff69b4,#ff99cc); color:white; padding:12px 30px; border:none; border-radius:30px; font-size:18px; cursor:pointer; margin-top:10px; width:100%; }
-        button:hover { transform:scale(1.02); }
-        .wish-link { background:#f0f0f0; padding:15px; border-radius:10px; margin:10px 0; word-break:break-all; }
-        .admin-section { margin-top:30px; background:#ffe6f0; padding:20px; border-radius:10px; }
-        table { width:100%; border-collapse:collapse; margin-top:10px; }
-        th { background:#ff69b4; color:white; padding:8px; }
-        td { padding:8px; border-bottom:1px solid #ddd; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #d4145a;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        textarea {
+            height: 80px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(45deg, #ff69b4, #ff99cc);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .link-box {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            word-break: break-all;
+            margin: 15px 0;
+        }
+        .contact-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid gold;
+        }
+        .contact-popup {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: none;
+        }
+        .photo-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .photo-grid img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        video {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        audio {
+            width: 100%;
+            max-width: 400px;
+            margin: 10px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #ff69b4;
+            color: white;
+        }
+        a {
+            color: #ff69b4;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
-    <div class="container" id="app">
-        <!-- Dynamic content goes here -->
-    </div>
+
+    <div id="app"></div>
 
     <script>
         const ADMIN_PASSWORD = "admin123";
-        const CONTACT = {
-            photo: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg",
-            fb: "https://www.facebook.com/rafahimn",
-            ig: "https://www.instagram.com/rafahimn"
-        };
-
-        function saveWish(data) {
-            const wishes = JSON.parse(localStorage.getItem('wishes') || '[]');
-            const id = Date.now().toString(36);
-            wishes.push({ id, ...data, createdAt: new Date().toISOString() });
-            localStorage.setItem('wishes', JSON.stringify(wishes));
-            return id;
-        }
+        const CONTACT_PHOTO = "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg";
+        const FB_LINK = "https://www.facebook.com/rafahimn";
+        const IG_LINK = "https://www.instagram.com/rafahimn";
 
         function getWishes() {
-            return JSON.parse(localStorage.getItem('wishes') || '[]');
+            return JSON.parse(localStorage.getItem('birthday_wishes') || '[]');
+        }
+
+        function saveWish(data) {
+            const wishes = getWishes();
+            const id = Date.now().toString(36);
+            wishes.push({ id, ...data, created: new Date().toISOString() });
+            localStorage.setItem('birthday_wishes', JSON.stringify(wishes));
+            return id;
         }
 
         function getWish(id) {
             return getWishes().find(w => w.id === id);
         }
 
-        function navigate(hash) {
-            window.location.hash = hash;
-        }
-
-        function render() {
-            const hash = window.location.hash.slice(1) || '/';
+        function showPage() {
+            const hash = window.location.hash.slice(1) || 'home';
             const app = document.getElementById('app');
 
-            if (hash === '/') {
-                // Home Page - Create Wish Form
+            if (hash === 'home') {
                 app.innerHTML = `
-                    <h1>🎂 Create Birthday Wish Page</h1>
-                    <input id="name" placeholder="Birthday Person's Name *" required />
-                    <input id="date" type="date" />
-                    <input id="time" type="time" />
-                    <input id="age" type="number" placeholder="Age (Number of candles)" value="18" />
-                    <textarea id="greeting" placeholder="Greeting Message"></textarea>
-                    <textarea id="reasons" placeholder="4 Reasons (one per line)"></textarea>
-                    <textarea id="photos" placeholder="Photo URLs with caption (url|caption)"></textarea>
-                    <textarea id="videos" placeholder="Video URLs (one per line)"></textarea>
-                    <input id="audio" placeholder="Audio URL (optional)" />
-                    <textarea id="letter" placeholder="Love Letter"></textarea>
-                    <button onclick="createWish()">✨ Create My Wish Page ✨</button>
-                    <br><small><a href="#/admin" style="color:#ff69b4;">Admin Panel</a></small>
+                    <div class="container">
+                        <h1>🎂 Create Birthday Wish</h1>
+                        <input id="bname" placeholder="Birthday Person Name *">
+                        <input id="bdate" type="date">
+                        <input id="btime" type="time" value="00:00">
+                        <input id="bage" type="number" placeholder="Age (candles)" value="18">
+                        <textarea id="bgreeting" placeholder="Greeting Message"></textarea>
+                        <textarea id="breasons" placeholder="Reasons (one per line)"></textarea>
+                        <textarea id="bphotos" placeholder="Photo URLs (one per line, url|caption)"></textarea>
+                        <textarea id="bvideos" placeholder="Video URLs (one per line)"></textarea>
+                        <input id="baudio" placeholder="Audio URL">
+                        <textarea id="bletter" placeholder="Love Letter"></textarea>
+                        <button onclick="createWish()">✨ Create My Wish Page ✨</button>
+                        <p style="text-align:center;margin-top:15px;"><a href="#admin">Admin Panel</a></p>
+                    </div>
+                    ${contactButton()}
                 `;
             }
-            else if (hash.startsWith('/wish/')) {
-                const id = hash.split('/wish/')[1];
+            else if (hash.startsWith('wish/')) {
+                const id = hash.split('wish/')[1];
                 const wish = getWish(id);
                 if (!wish) {
-                    app.innerHTML = '<h1>Wish not found 😢</h1><br><a href="/">Create yours</a>';
+                    app.innerHTML = '<div class="container"><h1>Wish Not Found</h1><p><a href="#home">Create Your Own</a></p></div>';
                     return;
                 }
-                const photos = (wish.photos || '').split('\n').filter(p => p.trim()).map(p => {
-                    const [url, caption] = p.split('|');
-                    return { url: url?.trim(), caption: caption?.trim() || '' };
-                });
-                const reasons = (wish.reasons || '').split('\n').filter(r => r.trim());
+                let html = `<div class="container">
+                    <h1>🎂 Happy Birthday ${wish.name} ❤️</h1>`;
+                if (wish.greeting) html += `<p style="font-size:18px;">${wish.greeting}</p>`;
                 
-                let html = `<h1>🎂 Happy Birthday ${wish.name} ❤️</h1>`;
-                html += `<p>${wish.greeting || ''}</p>`;
-                
-                // Photos
-                if (photos.length) {
-                    html += '<div style="display:flex;flex-wrap:wrap;gap:10px;margin:20px 0;">';
-                    photos.forEach(p => {
-                        html += `<div style="text-align:center;"><img src="${p.url}" style="width:150px;height:150px;object-fit:cover;border-radius:10px;" /><br><small>${p.caption}</small></div>`;
+                if (wish.photos) {
+                    html += '<div class="photo-grid">';
+                    wish.photos.split('\n').filter(p => p.trim()).forEach(p => {
+                        const [url, cap] = p.split('|');
+                        html += `<div><img src="${url.trim()}" alt="${cap||''}"><br><small>${cap||''}</small></div>`;
                     });
                     html += '</div>';
                 }
                 
-                // Videos
                 if (wish.videos) {
                     wish.videos.split('\n').filter(v => v.trim()).forEach(v => {
-                        html += `<video controls style="width:100%;max-width:400px;margin:10px 0;border-radius:10px;"><source src="${v.trim()}" /></video>`;
+                        html += `<video controls><source src="${v.trim()}"></video>`;
                     });
                 }
                 
-                // Audio
-                if (wish.audio) {
-                    html += `<audio controls style="width:100%;max-width:400px;margin:10px 0;"><source src="${wish.audio}" /></audio>`;
-                }
+                if (wish.audio) html += `<audio controls><source src="${wish.audio}"></audio>`;
                 
-                // Reasons
-                if (reasons.length) {
-                    html += '<ul style="text-align:left;margin:20px;">';
-                    reasons.forEach(r => html += `<li>${r}</li>`);
+                if (wish.reasons) {
+                    html += '<ul>';
+                    wish.reasons.split('\n').filter(r => r.trim()).forEach(r => html += `<li>${r}</li>`);
                     html += '</ul>';
                 }
                 
-                // Letter
-                if (wish.letter) {
-                    html += `<div style="background:#fff0f5;padding:20px;border-radius:10px;margin:20px 0;white-space:pre-line;">${wish.letter}</div>`;
-                }
+                if (wish.letter) html += `<div style="background:#fff0f5;padding:20px;border-radius:10px;white-space:pre-line;">${wish.letter}</div>`;
                 
-                html += '<br><a href="/">Create your own wish page</a>';
-                
-                // Contact button
-                html += `
-                    <div style="position:fixed;bottom:20px;right:20px;">
-                        <img src="${CONTACT.photo}" onclick="this.nextElementSibling.style.display='block'" style="width:50px;height:50px;border-radius:50%;cursor:pointer;border:2px solid gold;" />
-                        <div style="display:none;position:fixed;bottom:80px;right:20px;background:white;padding:15px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.2);">
-                            <a href="${CONTACT.fb}" target="_blank">Facebook</a><br>
-                            <a href="${CONTACT.ig}" target="_blank">Instagram</a><br>
-                            <button onclick="this.parentElement.style.display='none'" style="margin-top:5px;">Close</button>
-                        </div>
-                    </div>
-                `;
-                
+                html += `<p style="text-align:center;margin-top:20px;"><a href="#home">Create Your Own Wish</a></p></div>${contactButton()}`;
                 app.innerHTML = html;
             }
-            else if (hash === '/admin') {
-                const pw = prompt("Enter admin password:");
+            else if (hash === 'admin') {
+                const pw = prompt("Admin Password:");
                 if (pw !== ADMIN_PASSWORD) {
-                    app.innerHTML = '<h1>Wrong password</h1><br><a href="/">Back</a>';
+                    app.innerHTML = '<div class="container"><h1>Wrong Password</h1><p><a href="#home">Back</a></p></div>';
                     return;
                 }
                 const wishes = getWishes();
-                let html = '<h1>📊 Admin Panel</h1><p>Total: ' + wishes.length + '</p>';
-                html += '<table><tr><th>#</th><th>Name</th><th>Date</th><th>Link</th></tr>';
+                let html = '<div class="container"><h1>Admin Panel</h1><p>Total: ' + wishes.length + '</p><table><tr><th>#</th><th>Name</th><th>Date</th><th>Link</th></tr>';
                 wishes.forEach((w, i) => {
-                    html += `<tr><td>${i+1}</td><td>${w.name}</td><td>${new Date(w.createdAt).toLocaleDateString()}</td><td><a href="#/wish/${w.id}" target="_blank">Open 🔗</a></td></tr>`;
+                    html += `<tr><td>${i+1}</td><td>${w.name}</td><td>${new Date(w.created).toLocaleDateString()}</td><td><a href="#wish/${w.id}" target="_blank">Open 🔗</a></td></tr>`;
                 });
-                html += '</table><br><a href="/">Create New</a>';
+                html += '</table><p><a href="#home">Create New</a></p></div>';
                 app.innerHTML = html;
             }
+            else {
+                app.innerHTML = '<div class="container"><h1>Page Not Found</h1><p><a href="#home">Go Home</a></p></div>';
+            }
+        }
+
+        function contactButton() {
+            return `
+                <img src="${CONTACT_PHOTO}" class="contact-btn" onclick="toggleContact()" alt="Contact">
+                <div class="contact-popup" id="contactPopup">
+                    <p><b>Contact Creator</b></p>
+                    <p><a href="${FB_LINK}" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></p>
+                    <p><a href="${IG_LINK}" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></p>
+                    <button onclick="toggleContact()">Close</button>
+                </div>
+            `;
+        }
+
+        function toggleContact() {
+            const popup = document.getElementById('contactPopup');
+            if (popup) popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
         }
 
         function createWish() {
-            const name = document.getElementById('name').value.trim();
-            if (!name) return alert('Please enter birthday person name');
+            const name = document.getElementById('bname').value.trim();
+            if (!name) { alert('Please enter birthday person name'); return; }
             
-            const date = document.getElementById('date').value;
-            const time = document.getElementById('time').value;
+            const dateVal = document.getElementById('bdate').value;
+            const timeVal = document.getElementById('btime').value;
             let month = 2, day = 15, hour = 0, minute = 0;
-            if (date) {
-                const d = new Date(date);
-                month = d.getMonth();
-                day = d.getDate();
-            }
-            if (time) {
-                const [h, m] = time.split(':');
-                hour = parseInt(h) || 0;
-                minute = parseInt(m) || 0;
-            }
+            if (dateVal) { const d = new Date(dateVal); month = d.getMonth(); day = d.getDate(); }
+            if (timeVal) { const [h, m] = timeVal.split(':'); hour = parseInt(h)||0; minute = parseInt(m)||0; }
             
             const data = {
-                name,
+                name: name,
                 month, day, hour, minute,
-                age: parseInt(document.getElementById('age').value) || 18,
-                greeting: document.getElementById('greeting').value,
-                reasons: document.getElementById('reasons').value,
-                photos: document.getElementById('photos').value,
-                videos: document.getElementById('videos').value,
-                audio: document.getElementById('audio').value,
-                letter: document.getElementById('letter').value
+                age: parseInt(document.getElementById('bage').value) || 18,
+                greeting: document.getElementById('bgreeting').value,
+                reasons: document.getElementById('breasons').value,
+                photos: document.getElementById('bphotos').value,
+                videos: document.getElementById('bvideos').value,
+                audio: document.getElementById('baudio').value,
+                letter: document.getElementById('bletter').value
             };
             
             const id = saveWish(data);
-            const link = window.location.origin + window.location.pathname + '#/wish/' + id;
-            alert('Wish page created!\n\nYour link:\n' + link);
-            navigate('/wish/' + id);
+            const link = window.location.origin + window.location.pathname + '#wish/' + id;
+            alert('✅ Wish page created!\n\nLink: ' + link);
+            window.location.hash = 'wish/' + id;
         }
 
-        window.addEventListener('hashchange', render);
-        window.addEventListener('load', render);
+        window.addEventListener('hashchange', showPage);
+        window.addEventListener('load', showPage);
     </script>
 </body>
 </html>
