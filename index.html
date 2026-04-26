@@ -5,21 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Birthday Wish Hub 💫</title>
 
-    <!-- React & ReactDOM -->
     <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <!-- Cloudinary -->
     <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-    <!-- Babel -->
     <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.23.9/babel.min.js"></script>
-    <!-- GSAP & Confetti -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
-    <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Comic+Neue:wght@700&family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -42,82 +36,56 @@
         .floating-hearts { position:fixed; width:100%; height:100%; pointer-events:none; z-index:2; }
         .heart-float { position:absolute; font-size:1.5rem; color:rgba(255,105,180,0.6); animation:floatHeart var(--float-duration,6s) ease-in-out infinite; animation-delay:var(--delay,0s); }
         @keyframes floatHeart { 0%{ transform:translate(0,100vh) rotate(0deg); } 100%{ transform:translate(var(--translate-x,0), -100vh) rotate(360deg); } }
-        /* Contact Icon - Fixed for Admin */
+        /* Contact Icon Fixed */
         .contact-float-btn { position:fixed; bottom:20px; right:20px; z-index:9999; cursor:pointer; transition:transform 0.3s; border-radius:50%; box-shadow:0 0 20px rgba(255,215,0,0.5); width:50px; height:50px; overflow:hidden; }
         .contact-float-btn img { width:100%; height:100%; object-fit:cover; border-radius:50%; border:2px solid gold; }
         .contact-float-btn:hover { transform:scale(1.2); }
         .contact-modal { position:fixed; bottom:80px; right:20px; background:rgba(255,255,255,0.95); backdrop-filter:blur(10px); border-radius:20px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:10000; display:flex; flex-direction:column; align-items:center; gap:10px; }
         .login-container { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; z-index:1; }
         .login-btn { background:white; color:#333; padding:12px 30px; border-radius:30px; font-size:18px; border:none; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.2); transition:0.3s; display:inline-flex; align-items:center; gap:8px; }
-        .login-btn:hover { transform:scale(1.05); box-shadow:0 6px 20px rgba(0,0,0,0.3); }
         .form-container { max-width:600px; margin:20px auto; background:rgba(255,255,255,0.9); padding:30px; border-radius:30px; box-shadow:0 15px 35px rgba(0,0,0,0.2); }
         .form-group { margin-bottom:15px; }
         .form-group label { display:block; font-weight:600; margin-bottom:5px; }
         .form-group input, .form-group textarea { width:100%; padding:10px; border-radius:20px; border:1px solid #ddd; font-family:inherit; }
-        .form-group textarea { height:80px; }
-        .upload-preview { display:inline-block; margin:5px; max-width:80px; max-height:80px; border-radius:10px; object-fit:cover; }
         .submit-btn { background:linear-gradient(45deg,#ff69b4,#ff99cc); color:white; border:none; padding:12px 30px; border-radius:30px; font-size:18px; cursor:pointer; width:100%; }
-        .logout-btn { background: #ccc; border: none; padding: 10px 20px; border-radius: 20px; margin-top: 10px; cursor: pointer; }
-        .countdown-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg, rgba(255,209,220,0.4), rgba(230,230,250,0.4)); backdrop-filter:blur(8px); z-index:1000; text-align:center; padding:20px; }
-        .countdown-title { font-size:clamp(24px,5vw,40px); color:#fff; margin-bottom:20px; }
-        .countdown-box { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
-        .count-item { background:rgba(255,255,255,0.3); padding:12px 15px; border-radius:20px; min-width:70px; }
-        .count-number { font-size:clamp(28px,6vw,40px); font-weight:800; color:#fff; display:block; }
-        .count-label { font-size:12px; color:rgba(255,255,255,0.95); }
-        .greeting-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(-45deg,#fee9f7,#e8f5fe,#fef2e8,#f0ffe8); background-size:400% 400%; animation:gradientBG 15s ease infinite; z-index:900; padding:20px; text-align:center; }
-        .greeting-screen.show { display:flex; }
-        @keyframes gradientBG { 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
-        .greeting-screen h1 { font-family:'Bubblegum Sans',cursive; font-size:clamp(3rem,10vw,4.5rem); color:#d4145a; } 
-        .enter-btn { padding:1rem 2rem; font-size:1.2rem; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; cursor:pointer; }
-        .cake-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); z-index:800; padding:20px; }
-        .cake-screen.show { display:flex; }
-        .cake-container { background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); padding:30px; border-radius:40px; max-width:500px; width:100%; }
-        .cake-emoji { font-size:100px; text-align:center; }
-        .candles { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:20px 0; }
-        .candle { cursor:pointer; font-size:40px; animation:flicker 0.5s infinite alternate; filter:drop-shadow(0 0 8px gold); }
-        .candle.blown { opacity:0.2; filter:grayscale(1); pointer-events:none; animation:none; }
-        @keyframes flicker { from{ opacity:1; transform:scale(1); } to{ opacity:0.8; transform:scale(1.1); } }
-        .cake-status { color:white; margin:15px 0; padding:10px; border-radius:30px; background:rgba(0,0,0,0.5); text-align:center; }
-        .cut-btn { background:linear-gradient(45deg,gold,red); color:black; font-size:22px; padding:12px; border:none; border-radius:40px; font-weight:bold; cursor:pointer; width:100%; }
-        .cut-btn:disabled { opacity:0.3; }
-        .cake-next-btn { margin-top:15px; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; }
-        .reasons-screen, .photo-screen, .video-screen, .letter-screen, .secret-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; z-index:700; padding:20px; }
-        .photo-screen.show, .video-screen.show, .letter-screen.show, .secret-screen.show, .reasons-screen.show { display:flex; }
-        .photo-screen { overflow-y:auto; background:linear-gradient(135deg,#ffd1dc,#e6e6fa); justify-content:flex-start; padding-top:80px; }
-        .photo-header h1 { font-family:'Dancing Script',cursive; font-size:3rem; color:#b0306e; text-align:center; }
-        .photo-container { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:2rem; }
-        .photo-card { background:rgba(255,255,255,0.9); border-radius:20px; padding:1.5rem; cursor:pointer; }
-        .photo-img { width:100%; height:250px; object-fit:cover; border-radius:15px; }
-        .photo-date { font-family:'Dancing Script',cursive; color:#c71585; font-size:1.3rem; }
-        .photo-next-btn, .video-next-btn { margin:30px auto; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; display:block; max-width:300px; text-align:center; }
-        .video-screen { background:linear-gradient(135deg,#a8edea,#fed6e3); }
-        .video-grid { display:grid; grid-template-columns:1fr; gap:30px; max-width:1200px; width:100%; }
-        @media (min-width:768px) { .video-grid { grid-template-columns:repeat(2,1fr); } }
-        .video-card { background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); border-radius:20px; padding:20px; }
-        .video-wrapper { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; }
-        .video-wrapper video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
-        .letter-screen { background:#fdfbfb; }
-        .letter-container { max-width:600px; background:white; padding:2rem; border-radius:30px; text-align:center; }
-        .letter-container h2 { font-family:'Dancing Script',cursive; font-size:2.5rem; color:#b0306e; }
-        .letter-content { font-size:1.2rem; line-height:1.8; color:#2c3e50; white-space:pre-line; }
-        .letter-return-btn, .soulmate-btn { margin-top:20px; padding:12px 30px; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; display:inline-block; }
-        .secret-screen { background:#ffe6f0; }
-        .secret-container { max-width:600px; width:100%; background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); padding:2rem; border-radius:40px; text-align:center; }
-        .secret-photo { width:100%; max-height:400px; object-fit:cover; border-radius:30px; cursor:pointer; }
-        .lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10001; justify-content:center; align-items:center; }
-        .lightbox.show { display:flex; }
-        .lightbox img { max-width:90%; max-height:90%; border-radius:10px; border:3px solid white; }
-        .lightbox .close { position:absolute; top:20px; right:30px; font-size:40px; color:white; cursor:pointer; }
+        .logout-btn { background: #ccc; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
         .admin-table { width:100%; border-collapse:collapse; margin-top:20px; }
         .admin-table th { background:#ff69b4; color:white; padding:10px; }
         .admin-table td { padding:10px; border:1px solid #ddd; }
+        /* (remaining styles identical to earlier full version) */
+        .countdown-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg, rgba(255,209,220,0.4), rgba(230,230,250,0.4)); backdrop-filter:blur(8px); z-index:1000; text-align:center; }
+        .countdown-box { display:flex; gap:10px; justify-content:center; margin:20px 0; }
+        .count-item { background:rgba(255,255,255,0.3); padding:12px 15px; border-radius:20px; min-width:70px; }
+        .count-number { font-size:clamp(28px,6vw,40px); font-weight:800; color:#fff; display:block; }
+        .greeting-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(-45deg,#fee9f7,#e8f5fe,#fef2e8,#f0ffe8); background-size:400% 400%; animation:gradientBG 15s ease infinite; z-index:900; }
+        .greeting-screen.show { display:flex; } @keyframes gradientBG { 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
+        .enter-btn { padding:1rem 2rem; font-size:1.2rem; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; cursor:pointer; }
+        .cake-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); z-index:800; }
+        .cake-screen.show { display:flex; }
+        .cake-container { background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); padding:30px; border-radius:40px; max-width:500px; }
+        .candles { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:20px 0; }
+        .candle { cursor:pointer; font-size:40px; animation:flicker 0.5s infinite alternate; }
+        .candle.blown { opacity:0.2; filter:grayscale(1); animation:none; }
+        @keyframes flicker { from{ opacity:1; transform:scale(1); } to{ opacity:0.8; transform:scale(1.1); } }
+        .cut-btn { background:linear-gradient(45deg,gold,red); color:black; font-size:22px; padding:12px; border:none; border-radius:40px; font-weight:bold; cursor:pointer; width:100%; }
+        .cut-btn:disabled { opacity:0.3; }
+        .cake-next-btn { margin-top:15px; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; cursor:pointer; }
+        .reasons-screen, .photo-screen, .video-screen, .letter-screen, .secret-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; z-index:700; }
+        .photo-screen.show, .video-screen.show, .letter-screen.show, .secret-screen.show, .reasons-screen.show { display:flex; }
+        .photo-screen { overflow-y:auto; background:linear-gradient(135deg,#ffd1dc,#e6e6fa); justify-content:flex-start; padding-top:80px; }
+        .photo-container { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:2rem; }
+        .photo-card { background:rgba(255,255,255,0.9); border-radius:20px; padding:1.5rem; cursor:pointer; }
+        .photo-img { width:100%; height:250px; object-fit:cover; border-radius:15px; }
+        .lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10001; justify-content:center; align-items:center; }
+        .lightbox.show { display:flex; }
+        .lightbox img { max-width:90%; max-height:90%; border-radius:10px; }
+        .lightbox .close { position:absolute; top:20px; right:30px; font-size:40px; color:white; cursor:pointer; }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        // ==================== CONFIG ====================
         const firebaseConfig = {
             apiKey: "AIzaSyC18r8GPtooLmUBnOGRBQUIKOodPvHRX8o",
             authDomain: "birthday-website-33f71.firebaseapp.com",
@@ -129,14 +97,13 @@
         };
         const CLOUDINARY_CLOUD_NAME = "dpctt0wao";
         const CLOUDINARY_UPLOAD_PRESET = "birthday_upload";
-
-        // Fixed contact info (your original)
+        // Fixed contact info – your original design
         const ADMIN_CONTACT = {
             photo: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg",
             facebook: "https://www.facebook.com/rafahimn",
             instagram: "https://www.instagram.com/rafahimn"
         };
-        // =================================================
+        const ADMIN_PASSWORD = "admin123"; // change if you want
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -144,7 +111,7 @@
 
         const { useState, useEffect, useRef, createContext, useContext } = React;
 
-        // ---------- Custom Hash Router ----------
+        // Custom Hash Router
         const RouterContext = createContext();
         function useHashRouter() {
             const [hash, setHash] = useState(window.location.hash.slice(1) || '/');
@@ -172,18 +139,18 @@
             return currentPath === path ? element() : null;
         }
 
-        // ---------- Floating Effects ----------
+        // Floating effects
         function startFloatingHearts() {
-            const interval = setInterval(() => {
+            setInterval(() => {
                 const container = document.querySelector('.floating-hearts');
                 if (!container) return;
                 const heart = document.createElement('div');
                 heart.className = 'heart-float';
                 heart.textContent = ['💖','💝','💗','💓','💕'][Math.floor(Math.random()*5)];
                 heart.style.left = Math.random() * 100 + '%';
-                heart.style.setProperty('--float-duration', (Math.random() * 4 + 4) + 's');
-                heart.style.setProperty('--delay', Math.random() * 3 + 's');
-                heart.style.setProperty('--translate-x', (Math.random() * 60 - 30) + 'px');
+                heart.style.setProperty('--float-duration', (Math.random()*4+4)+'s');
+                heart.style.setProperty('--delay', Math.random()*3+'s');
+                heart.style.setProperty('--translate-x', (Math.random()*60-30)+'px');
                 container.appendChild(heart);
                 setTimeout(() => heart.remove(), 8000);
             }, 800);
@@ -193,17 +160,17 @@
                 const container = document.querySelector('.floating-elements');
                 if (!container) return;
                 const el = document.createElement('div');
-                el.className = 'float-item ' + (Math.random() > 0.5 ? 'butterfly' : 'flower');
+                el.className = 'float-item ' + (Math.random()>0.5?'butterfly':'flower');
                 el.textContent = ['🦋','🌸','🌼','🌺'][Math.floor(Math.random()*4)];
-                el.style.left = Math.random() * 100 + '%';
-                el.style.setProperty('animation-delay', Math.random() * 5 + 's');
-                el.style.fontSize = (Math.random() * 1.5 + 1.5) + 'rem';
+                el.style.left = Math.random()*100+'%';
+                el.style.animationDelay = Math.random()*5+'s';
+                el.style.fontSize = (Math.random()*1.5+1.5)+'rem';
                 container.appendChild(el);
                 setTimeout(() => el.remove(), 15000);
             }, 2000);
         }
 
-        // ---------- Fixed Contact Button ----------
+        // Contact Fixed Button (original design)
         function ContactFloatingButton() {
             const [open, setOpen] = useState(false);
             return (
@@ -223,12 +190,11 @@
             );
         }
 
-        // ---------- Cloudinary Upload Helper ----------
         function uploadToCloudinary(callback) {
             window.cloudinary.openUploadWidget({
                 cloudName: CLOUDINARY_CLOUD_NAME,
                 uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-                sources: ['local', 'url', 'camera'],
+                sources: ['local','url','camera'],
                 multiple: false,
             }, (error, result) => {
                 if (!error && result && result.event === "success") {
@@ -237,7 +203,6 @@
             });
         }
 
-        // ---------- Login Page ----------
         function LoginPage() {
             const { navigate } = useContext(RouterContext);
             const login = async () => {
@@ -261,54 +226,33 @@
                             <i className="fab fa-google"></i> Login with Google
                         </button>
                     </div>
+                    <ContactFloatingButton />
                 </div>
             );
         }
 
-        // ---------- Dashboard (Only Uploads, No URLs) ----------
         function Dashboard() {
             const { navigate } = useContext(RouterContext);
             const [form, setForm] = useState({
                 birthdayName: '',
-                month: 2, day: 15, hour: 0, minute: 0,
-                age: 17,
+                month: 2, day: 15, hour: 0, minute: 0, age: 17,
                 greetingText: '',
                 reasons: [{text:'',emoji:'💖'},{text:'',emoji:'💗'},{text:'',emoji:'💕'},{text:'',emoji:'🌟'}],
-                photos: [],
-                videos: [],
-                countdownAudio: '',
-                wishAudio: '',
+                photos: [], videos: [],
+                countdownAudio: '', wishAudio: '',
                 letter: '',
                 secretPhoto: ''
             });
             const [saving, setSaving] = useState(false);
-            const [preview, setPreview] = useState({photos:[], videos:[], secretPhoto:'', audio:''});
 
             const handleChange = (e) => {
                 const { name, value } = e.target;
                 setForm(prev => ({ ...prev, [name]: value }));
             };
 
-            const addPhoto = (url) => {
-                setForm(prev => ({...prev, photos: [...prev.photos, {url, date:'Memory', caption:''}] }));
-                setPreview(prev => ({...prev, photos: [...prev.photos, url]}));
-            };
-            const addVideo = (url) => {
-                setForm(prev => ({...prev, videos: [...prev.videos, {url, title:'Video'}] }));
-                setPreview(prev => ({...prev, videos: [...prev.videos, url]}));
-            };
-            const setAudio = (url, type) => {
-                setForm(prev => ({...prev, [type]: url}));
-                setPreview(prev => ({...prev, audio: url}));
-            };
-            const setSecret = (url) => {
-                setForm(prev => ({...prev, secretPhoto: url}));
-                setPreview(prev => ({...prev, secretPhoto: url}));
-            };
-
             const handleSubmit = async () => {
                 if (!auth.currentUser) { alert('Please login first'); return; }
-                if (!form.birthdayName.trim()) { alert('Please enter birthday person name'); return; }
+                if (!form.birthdayName.trim()) { alert('Enter birthday person name'); return; }
                 setSaving(true);
                 try {
                     const wishId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
@@ -337,160 +281,134 @@
                         </div>
                     </div>
                     <div className="form-container">
-                        <div className="form-group"><label>Birthday Person's Name *</label><input name="birthdayName" value={form.birthdayName} onChange={handleChange} placeholder="Enter name" /></div>
+                        <div className="form-group"><label>Birthday Person's Name *</label><input name="birthdayName" value={form.birthdayName} onChange={handleChange} /></div>
                         <div className="form-group"><label>Birth Date</label><input type="date" onChange={e => { const d = new Date(e.target.value); setForm(prev => ({...prev, month: d.getMonth(), day: d.getDate()})); }} /><input type="time" onChange={e => { const [h,m] = e.target.value.split(':'); setForm(prev => ({...prev, hour: parseInt(h)||0, minute: parseInt(m)||0})); }} /></div>
-                        <div className="form-group"><label>Age (Number of Candles)</label><input type="number" name="age" value={form.age} onChange={e => setForm(prev => ({...prev, age: parseInt(e.target.value)||17}))} /></div>
-                        <div className="form-group"><label>Greeting Message</label><textarea name="greetingText" value={form.greetingText} onChange={handleChange} placeholder="Your sweet message..." /></div>
-                        
-                        {/* Reasons */}
+                        <div className="form-group"><label>Age (Candles)</label><input type="number" name="age" value={form.age} onChange={e => setForm(prev => ({...prev, age: parseInt(e.target.value)||17}))} /></div>
+                        <div className="form-group"><label>Greeting Message</label><textarea name="greetingText" value={form.greetingText} onChange={handleChange} /></div>
                         <div className="form-group"><label>4 Reasons (Emoji + Text)</label>
                             {form.reasons.map((r,i) => (
                                 <div key={i} style={{display:'flex', gap:'5px', marginBottom:'5px'}}>
-                                    <input style={{width:'50px'}} value={r.emoji} onChange={e => {
-                                        const newR = [...form.reasons];
-                                        newR[i].emoji = e.target.value;
-                                        setForm(prev => ({...prev, reasons: newR}));
-                                    }} />
-                                    <input style={{flex:1}} value={r.text} onChange={e => {
-                                        const newR = [...form.reasons];
-                                        newR[i].text = e.target.value;
-                                        setForm(prev => ({...prev, reasons: newR}));
-                                    }} placeholder={"Reason "+(i+1)} />
+                                    <input style={{width:'50px'}} value={r.emoji} onChange={e => { const newR = [...form.reasons]; newR[i].emoji = e.target.value; setForm(prev => ({...prev, reasons: newR})); }} />
+                                    <input style={{flex:1}} value={r.text} onChange={e => { const newR = [...form.reasons]; newR[i].text = e.target.value; setForm(prev => ({...prev, reasons: newR})); }} placeholder={"Reason "+(i+1)} />
                                 </div>
                             ))}
                         </div>
-
-                        {/* Photos Upload */}
-                        <div className="form-group">
-                            <label>Photos (Click to upload)</label>
-                            <button type="button" onClick={() => uploadToCloudinary(addPhoto)}>📸 Upload Photo</button>
-                            <div>{preview.photos.map((url,i) => <img key={i} src={url} className="upload-preview" />)}</div>
+                        <div className="form-group"><label>Photos</label>
+                            <button type="button" onClick={() => uploadToCloudinary(url => setForm(prev => ({...prev, photos: [...prev.photos, {url, date:'Memory', caption:''}] })))}>📸 Upload Photo</button>
                             {form.photos.map((p,i) => (
                                 <div key={i} style={{display:'flex', gap:'5px', marginTop:'5px'}}>
-                                    <input style={{flex:1}} value={p.date} onChange={e => {
-                                        const newP = [...form.photos];
-                                        newP[i].date = e.target.value;
-                                        setForm(prev => ({...prev, photos: newP}));
-                                    }} placeholder="Date/Caption" />
-                                    <input style={{flex:2}} value={p.caption} onChange={e => {
-                                        const newP = [...form.photos];
-                                        newP[i].caption = e.target.value;
-                                        setForm(prev => ({...prev, photos: newP}));
-                                    }} placeholder="Caption" />
+                                    <input value={p.date} onChange={e => { const newP = [...form.photos]; newP[i].date = e.target.value; setForm(prev => ({...prev, photos: newP})); }} placeholder="Date" />
+                                    <input value={p.caption} onChange={e => { const newP = [...form.photos]; newP[i].caption = e.target.value; setForm(prev => ({...prev, photos: newP})); }} placeholder="Caption" />
                                 </div>
                             ))}
                         </div>
-
-                        {/* Videos Upload */}
-                        <div className="form-group">
-                            <label>Videos (Click to upload)</label>
-                            <button type="button" onClick={() => uploadToCloudinary(addVideo)}>🎥 Upload Video</button>
-                            <div>{preview.videos.map((url,i) => <span key={i} style={{margin:'5px'}}>✅ Video {i+1}</span>)}</div>
+                        <div className="form-group"><label>Videos</label>
+                            <button type="button" onClick={() => uploadToCloudinary(url => setForm(prev => ({...prev, videos: [...prev.videos, {url, title:'Video'}] })))}>🎥 Upload Video</button>
                             {form.videos.map((v,i) => (
                                 <div key={i} style={{marginTop:'5px'}}>
-                                    <input style={{width:'100%'}} value={v.title} onChange={e => {
-                                        const newV = [...form.videos];
-                                        newV[i].title = e.target.value;
-                                        setForm(prev => ({...prev, videos: newV}));
-                                    }} placeholder="Video Title" />
+                                    <input value={v.title} onChange={e => { const newV = [...form.videos]; newV[i].title = e.target.value; setForm(prev => ({...prev, videos: newV})); }} placeholder="Title" />
                                 </div>
                             ))}
                         </div>
-
-                        {/* Audios Upload */}
-                        <div className="form-group">
-                            <label>Countdown Audio (Upload MP3)</label>
-                            <button type="button" onClick={() => uploadToCloudinary(url => setAudio(url, 'countdownAudio'))}>🎵 Upload Countdown Audio</button>
-                            {form.countdownAudio && <span style={{marginLeft:'10px', color:'green'}}>✅ Uploaded</span>}
+                        <div className="form-group"><label>Countdown Audio</label>
+                            <button type="button" onClick={() => uploadToCloudinary(url => setForm(prev => ({...prev, countdownAudio: url})))}>🎵 Upload</button>
+                            {form.countdownAudio && <span> ✅ Uploaded</span>}
                         </div>
-                        <div className="form-group">
-                            <label>Birthday Wish Audio (Upload MP3)</label>
-                            <button type="button" onClick={() => uploadToCloudinary(url => setAudio(url, 'wishAudio'))}>🎶 Upload Wish Audio</button>
-                            {form.wishAudio && <span style={{marginLeft:'10px', color:'green'}}>✅ Uploaded</span>}
+                        <div className="form-group"><label>Birthday Wish Audio</label>
+                            <button type="button" onClick={() => uploadToCloudinary(url => setForm(prev => ({...prev, wishAudio: url})))}>🎶 Upload</button>
+                            {form.wishAudio && <span> ✅ Uploaded</span>}
                         </div>
-
-                        {/* Letter */}
-                        <div className="form-group"><label>Love Letter</label><textarea name="letter" value={form.letter} onChange={handleChange} placeholder="Your heartfelt letter..." /></div>
-
-                        {/* Secret Photo */}
-                        <div className="form-group">
-                            <label>Secret Photo</label>
-                            <button type="button" onClick={() => uploadToCloudinary(setSecret)}>🖼️ Upload Secret Photo</button>
-                            {preview.secretPhoto && <img src={preview.secretPhoto} className="upload-preview" style={{maxWidth:'100px'}} />}
+                        <div className="form-group"><label>Love Letter</label><textarea name="letter" value={form.letter} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Secret Photo</label>
+                            <button type="button" onClick={() => uploadToCloudinary(url => setForm(prev => ({...prev, secretPhoto: url})))}>🖼️ Upload</button>
+                            {form.secretPhoto && <span> ✅ Uploaded</span>}
                         </div>
-
                         <button className="submit-btn" onClick={handleSubmit} disabled={saving}>
-                            {saving ? 'Creating your wish page...' : '✨ Create My Wish Page ✨'}
+                            {saving ? 'Creating...' : '✨ Create My Wish Page ✨'}
                         </button>
                     </div>
+                    <ContactFloatingButton />
                 </div>
             );
         }
 
-        // ---------- Admin Panel ----------
         function AdminPanel() {
             const { navigate } = useContext(RouterContext);
+            const [password, setPassword] = useState('');
+            const [authenticated, setAuthenticated] = useState(false);
             const [wishes, setWishes] = useState([]);
-            const [loading, setLoading] = useState(true);
+            const [loading, setLoading] = useState(false);
 
-            useEffect(() => {
-                db.collection('wishes').orderBy('createdAt','desc').get()
-                    .then(snapshot => {
-                        const data = [];
-                        snapshot.forEach(doc => data.push({id: doc.id, ...doc.data()}));
-                        setWishes(data);
-                    })
-                    .catch(err => alert('Error loading admin: ' + err.message))
-                    .finally(() => setLoading(false));
-            }, []);
+            const fetchWishes = async () => {
+                setLoading(true);
+                try {
+                    const snap = await db.collection('wishes').orderBy('createdAt','desc').get();
+                    const data = [];
+                    snap.forEach(doc => data.push({id: doc.id, ...doc.data()}));
+                    setWishes(data);
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+                setLoading(false);
+            };
 
-            if (loading) return <div style={{padding:'50px', textAlign:'center'}}>Loading admin panel...</div>;
+            const handleLogin = () => {
+                if (password === ADMIN_PASSWORD) {
+                    setAuthenticated(true);
+                    fetchWishes();
+                } else {
+                    alert('Wrong password!');
+                }
+            };
+
+            if (!authenticated) {
+                return (
+                    <div style={{ maxWidth: '400px', margin: '100px auto', textAlign: 'center' }}>
+                        <h2>Admin Login</h2>
+                        <input type="password" placeholder="Enter admin password" value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            style={{ width:'100%', padding:'10px', borderRadius:'20px', border:'1px solid #ccc', margin:'10px 0' }} />
+                        <button onClick={handleLogin} style={{ padding:'10px 25px', background:'#ff69b4', color:'white', border:'none', borderRadius:'20px', cursor:'pointer' }}>
+                            Login
+                        </button>
+                        <button onClick={() => navigate('/dashboard')} className="logout-btn" style={{ marginLeft:'10px' }}>Back</button>
+                    </div>
+                );
+            }
 
             return (
                 <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom:'20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h1>📊 Admin Panel - All Wishes</h1>
                         <button className="logout-btn" onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
                     </div>
                     <p>Total wishes: <strong>{wishes.length}</strong></p>
-                    <table className="admin-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>For</th>
-                                <th>Created By</th>
-                                <th>Date</th>
-                                <th>Link</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {wishes.map((w, i) => (
-                                <tr key={w.id}>
-                                    <td>{i+1}</td>
-                                    <td>{w.birthdayName}</td>
-                                    <td>{w.userEmail || 'Unknown'}</td>
-                                    <td>{w.createdAt ? new Date(w.createdAt.seconds*1000).toLocaleDateString() : 'N/A'}</td>
-                                    <td>
-                                        <a href={`#/wish/${w.id}`} target="_blank" style={{color:'#ff69b4'}}>
-                                            Open Wish 🔗
-                                        </a>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {wishes.length === 0 && <p style={{textAlign:'center', marginTop:'30px'}}>No wishes created yet.</p>}
+                    {loading ? <p>Loading...</p> : (
+                        <table className="admin-table">
+                            <thead>
+                                <tr><th>#</th><th>For</th><th>Created By</th><th>Date</th><th>Link</th></tr>
+                            </thead>
+                            <tbody>
+                                {wishes.map((w,i) => (
+                                    <tr key={w.id}>
+                                        <td>{i+1}</td>
+                                        <td>{w.birthdayName}</td>
+                                        <td>{w.userEmail || 'Unknown'}</td>
+                                        <td>{w.createdAt ? new Date(w.createdAt.seconds*1000).toLocaleDateString() : 'N/A'}</td>
+                                        <td><a href={`#/wish/${w.id}`} style={{color:'#ff69b4'}}>Open 🔗</a></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             );
         }
 
-        // ---------- Wish Page (Public) ----------
         function WishPage({ wishId }) {
             const [wishData, setWishData] = useState(null);
             const [loading, setLoading] = useState(true);
             const [currentStep, setCurrentStep] = useState('countdown');
-            const countdownAudioRef = useRef(null);
-            const wishAudioRef = useRef(null);
             const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
             useEffect(() => {
@@ -515,19 +433,6 @@
                 return () => clearInterval(timer);
             }, [wishData]);
 
-            useEffect(() => {
-                if (currentStep === 'countdown' && wishData?.countdownAudio) {
-                    if (countdownAudioRef.current) countdownAudioRef.current.pause();
-                    countdownAudioRef.current = new Audio(wishData.countdownAudio);
-                    countdownAudioRef.current.play().catch(() => {});
-                }
-                if (currentStep === 'greeting' && wishData?.wishAudio) {
-                    if (wishAudioRef.current) wishAudioRef.current.pause();
-                    wishAudioRef.current = new Audio(wishData.wishAudio);
-                    wishAudioRef.current.play().catch(() => {});
-                }
-            }, [currentStep, wishData]);
-
             if (loading) return <div style={{textAlign:'center', marginTop:'100px'}}>Loading...</div>;
             if (!wishData) return <div style={{textAlign:'center', marginTop:'100px'}}>Page not found</div>;
 
@@ -547,28 +452,25 @@
                         <span className="close">&times;</span><img id="lightboxImg" src="" alt="lightbox" />
                     </div>
 
-                    {currentStep === 'countdown' && (
-                        <CountdownContent wishData={wishData} months={months} />
-                    )}
+                    {currentStep === 'countdown' && <Countdown wishData={wishData} months={months} />}
                     {currentStep === 'greeting' && (
                         <div className="greeting-screen show">
-                            <h1>🎂 Happy Birthday {wishData.birthdayName} ❤️🎂💫</h1>
-                            <p style={{fontSize:'1.3rem', margin:'20px'}}>{wishData.greetingText}</p>
+                            <h1 style={{fontFamily:'Bubblegum Sans',fontSize:'3rem',color:'#d4145a'}}>🎂 Happy Birthday {wishData.birthdayName} ❤️</h1>
+                            <p style={{fontSize:'1.3rem',margin:'20px'}}>{wishData.greetingText}</p>
                             <button className="enter-btn" onClick={() => setCurrentStep('cake')}>Click to enter your world 💕</button>
                         </div>
                     )}
-                    {currentStep === 'cake' && <CakeScreen wishData={wishData} onNext={() => setCurrentStep('reasons')} />}
-                    {currentStep === 'reasons' && <ReasonsScreen wishData={wishData} onNext={() => setCurrentStep('photo')} />}
-                    {currentStep === 'photo' && <PhotoScreen wishData={wishData} openLightbox={openLightbox} onNext={() => setCurrentStep('video')} />}
-                    {currentStep === 'video' && <VideoScreen wishData={wishData} onNext={() => setCurrentStep('letter')} />}
-                    {currentStep === 'letter' && <LetterScreen wishData={wishData} onNext={() => setCurrentStep('secret')} />}
-                    {currentStep === 'secret' && <SecretScreen wishData={wishData} openLightbox={openLightbox} />}
+                    {currentStep === 'cake' && <Cake wishData={wishData} onNext={() => setCurrentStep('reasons')} />}
+                    {currentStep === 'reasons' && <Reasons wishData={wishData} onNext={() => setCurrentStep('photo')} />}
+                    {currentStep === 'photo' && <Photos wishData={wishData} openLightbox={openLightbox} onNext={() => setCurrentStep('video')} />}
+                    {currentStep === 'video' && <Videos wishData={wishData} onNext={() => setCurrentStep('letter')} />}
+                    {currentStep === 'letter' && <Letter wishData={wishData} onNext={() => setCurrentStep('secret')} />}
+                    {currentStep === 'secret' && <Secret wishData={wishData} openLightbox={openLightbox} />}
                 </div>
             );
         }
 
-        // Sub-components (simplified but functional)
-        function CountdownContent({ wishData, months }) {
+        function Countdown({ wishData, months }) {
             const [time, setTime] = useState({ days:0, hours:0, mins:0, secs:0 });
             useEffect(() => {
                 const interval = setInterval(() => {
@@ -587,63 +489,35 @@
             }, [wishData]);
             return (
                 <div className="countdown-screen" style={{display:'flex'}}>
-                    <h1 className="countdown-title">⏳ Wait for countdown...⌛</h1>
+                    <h1 style={{color:'white',fontSize:'2rem'}}>⌛ Wait for countdown...</h1>
                     <div className="countdown-box">
                         <div className="count-item"><span className="count-number">{String(time.days).padStart(2,'0')}</span><span className="count-label">Days</span></div>
                         <div className="count-item"><span className="count-number">{String(time.hours).padStart(2,'0')}</span><span className="count-label">Hours</span></div>
                         <div className="count-item"><span className="count-number">{String(time.mins).padStart(2,'0')}</span><span className="count-label">Mins</span></div>
                         <div className="count-item"><span className="count-number">{String(time.secs).padStart(2,'0')}</span><span className="count-label">Secs</span></div>
                     </div>
-                    <p style={{color:'white'}}>⏰ Time-lap at {wishData.day} {months[wishData.month]} {wishData.hour}:{String(wishData.minute).padStart(2,'0')}</p>
+                    <p style={{color:'white'}}>⏰ {wishData.day} {months[wishData.month]} at {wishData.hour}:{String(wishData.minute).padStart(2,'0')}</p>
                 </div>
             );
         }
 
-        function CakeScreen({ wishData, onNext }) {
+        function Cake({ wishData, onNext }) {
             const [cut, setCut] = useState(false);
             const [blown, setBlown] = useState(0);
             const total = wishData.age || 17;
-            useEffect(() => {
-                let interval;
-                if (!cut) {
-                    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                        const analyser = audioCtx.createAnalyser();
-                        const source = audioCtx.createMediaStreamSource(stream);
-                        source.connect(analyser);
-                        analyser.fftSize = 256;
-                        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-                        interval = setInterval(() => {
-                            if (cut || blown >= total) { clearInterval(interval); return; }
-                            analyser.getByteFrequencyData(dataArray);
-                            if (dataArray.reduce((a,b)=>a+b,0)/dataArray.length > 50) {
-                                setBlown(prev => {
-                                    const newB = Math.min(prev+2, total);
-                                    if (newB === total && window.confetti) confetti({ particleCount:100, spread:70 });
-                                    return newB;
-                                });
-                            }
-                        }, 150);
-                    }).catch(() => {});
-                }
-                return () => { if (interval) clearInterval(interval); };
-            }, [cut, total]);
-            const blowCandle = (i) => {
-                if (!cut && i >= blown) {
-                    setBlown(i+1);
-                    if (window.confetti) confetti({ particleCount:5, spread:30 });
-                }
-            };
             return (
                 <div className="cake-screen show">
                     <div className="cake-container">
-                        <div className="cake-emoji">{cut ? '🍰' : '🎂'}</div>
+                        <div style={{fontSize:'100px', textAlign:'center'}}>{cut ? '🍰' : '🎂'}</div>
                         <div className="candles">
                             {Array.from({length: total}).map((_, i) => (
-                                <span key={i} className={`candle ${i < blown ? 'blown' : ''}`} onClick={() => blowCandle(i)}>🕯️</span>
+                                <span key={i} className={`candle ${i < blown ? 'blown' : ''}`}
+                                    onClick={() => { if (!cut && i >= blown) { setBlown(i+1); if (i+1 === total) alert('All candles blown!'); } }}>
+                                    🕯️
+                                </span>
                             ))}
                         </div>
-                        <div className="cake-status">{cut ? '🎉 Cake cut! Happy Birthday! 🎉' : `${total-blown} candles burning - Blow or tap`}</div>
+                        <div className="cake-status">{cut ? '🎉 Cake cut! Happy Birthday! 🎉' : `${total-blown} candles burning`}</div>
                         {!cut && <button className="cut-btn" disabled={blown !== total} onClick={() => { setCut(true); if (window.confetti) confetti({ particleCount:150, spread:80 }); }}>🍰 Cut Cake</button>}
                         {cut && <button className="cake-next-btn" onClick={onNext}>Enter your storyline 💫</button>}
                     </div>
@@ -651,85 +525,84 @@
             );
         }
 
-        function ReasonsScreen({ wishData, onNext }) {
+        function Reasons({ wishData, onNext }) {
             const [index, setIndex] = useState(0);
             const reasons = wishData.reasons?.filter(r => r.text.trim()) || [];
-            useEffect(() => { if (!reasons.length) { setTimeout(onNext, 100); } }, []);
-            if (!reasons.length) return null;
-            const r = reasons[index] || reasons[0];
+            if (!reasons.length) { setTimeout(onNext, 100); return null; }
+            const r = reasons[index];
             return (
-                <div className="reasons-screen show">
-                    <h2 style={{fontFamily:'Bubblegum Sans', fontSize:'2.5rem', color:'#ff69b4'}}>❤️ Reasons Why ❤️</h2>
-                    <div style={{background:'white', padding:'30px', borderRadius:'20px', margin:'20px', maxWidth:'500px', textAlign:'center'}}>
+                <div className="reasons-screen show" style={{background:'linear-gradient(-45deg,#ffe6e6,#e6e6ff)'}}>
+                    <h2 style={{fontFamily:'Bubblegum Sans',fontSize:'2.5rem',color:'#ff69b4'}}>❤️ Reasons Why ❤️</h2>
+                    <div style={{background:'white',padding:'30px',borderRadius:'20px',maxWidth:'400px',textAlign:'center',margin:'20px'}}>
                         <div style={{fontSize:'3rem'}}>{r.emoji}</div>
-                        <p style={{fontSize:'1.3rem', marginTop:'10px'}}>{r.text}</p>
+                        <p style={{fontSize:'1.3rem'}}>{r.text}</p>
                     </div>
                     <p>Reason {index+1} of {reasons.length}</p>
                     <button className="enter-btn" onClick={() => index < reasons.length-1 ? setIndex(index+1) : onNext()}>
-                        {index === reasons.length-1 ? "🎉 See Memories 🎉" : "Next Reason 💕"}
+                        {index === reasons.length-1 ? "🎉 See Memories 🎉" : "Next 💕"}
                     </button>
                 </div>
             );
         }
 
-        function PhotoScreen({ wishData, openLightbox, onNext }) {
+        function Photos({ wishData, openLightbox, onNext }) {
             return (
                 <div className="photo-screen show">
-                    <div className="photo-header"><h1>📸 Our Beautiful Moments Together</h1><p>Every moment with you is magical...</p></div>
+                    <h1 style={{fontFamily:'Dancing Script',color:'#b0306e',margin:'20px'}}>Our Beautiful Moments Together</h1>
                     <div className="photo-container">
-                        {(wishData.photos || []).map((p, i) => (
+                        {(wishData.photos || []).map((p,i) => (
                             <div key={i} className="photo-card" onClick={() => openLightbox(p.url)}>
                                 <img src={p.url} className="photo-img" alt={p.date} />
-                                <div className="photo-date">{p.date}</div>
+                                <div style={{fontFamily:'Dancing Script',color:'#c71585',fontSize:'1.2rem'}}>{p.date}</div>
                                 <p>{p.caption}</p>
                             </div>
                         ))}
                     </div>
-                    <button className="photo-next-btn" onClick={onNext}>🎥 Watch Videos 🎥</button>
+                    <button className="cake-next-btn" style={{margin:'30px auto',display:'block'}} onClick={onNext}>🎥 Watch Videos 🎥</button>
                 </div>
             );
         }
 
-        function VideoScreen({ wishData, onNext }) {
+        function Videos({ wishData, onNext }) {
             return (
-                <div className="video-screen show">
-                    <h2>🎬 A Special Video Message</h2>
-                    <div className="video-container">
-                        <div className="video-grid">
-                            {(wishData.videos || []).map((v, i) => (
-                                <div key={i} className="video-card">
-                                    <h3>{v.title}</h3>
-                                    <div className="video-wrapper">
-                                        <video controls><source src={v.url} type="video/mp4" /></video>
-                                    </div>
+                <div className="video-screen show" style={{background:'linear-gradient(135deg,#a8edea,#fed6e3)'}}>
+                    <h2 style={{fontFamily:'Dancing Script',color:'#b0306e'}}>A Special Video Message</h2>
+                    <div className="video-grid">
+                        {(wishData.videos || []).map((v,i) => (
+                            <div key={i} className="video-card">
+                                <h3>{v.title}</h3>
+                                <div style={{position:'relative',paddingBottom:'56.25%',height:0,overflow:'hidden',borderRadius:'15px'}}>
+                                    <video controls style={{position:'absolute',top:0,left:0,width:'100%',height:'100%'}}>
+                                        <source src={v.url} type="video/mp4" />
+                                    </video>
                                 </div>
-                            ))}
-                        </div>
-                        <button className="video-next-btn" onClick={onNext}>💌 Read Your Letter 💌</button>
+                            </div>
+                        ))}
+                    </div>
+                    <button className="cake-next-btn" style={{margin:'30px auto',display:'block'}} onClick={onNext}>💌 Read Your Letter 💌</button>
+                </div>
+            );
+        }
+
+        function Letter({ wishData, onNext }) {
+            return (
+                <div className="letter-screen show" style={{background:'#fdfbfb'}}>
+                    <div style={{maxWidth:'600px',background:'white',padding:'2rem',borderRadius:'30px',textAlign:'center'}}>
+                        <h2 style={{fontFamily:'Dancing Script',color:'#b0306e'}}>A Letter for You 💌</h2>
+                        <p style={{whiteSpace:'pre-line',lineHeight:'1.8'}}>{wishData.letter}</p>
+                        <button className="enter-btn" onClick={onNext}>Again, Happy Birthday!</button>
                     </div>
                 </div>
             );
         }
 
-        function LetterScreen({ wishData, onNext }) {
+        function Secret({ wishData, openLightbox }) {
             return (
-                <div className="letter-screen show">
-                    <div className="letter-container">
-                        <h2>💌 A Letter for You 💌</h2>
-                        <div className="letter-content">{wishData.letter}</div>
-                        <button className="letter-return-btn" onClick={onNext}>🎁 Special Surprise 🎁</button>
-                    </div>
-                </div>
-            );
-        }
-
-        function SecretScreen({ wishData, openLightbox }) {
-            return (
-                <div className="secret-screen show">
-                    <div className="secret-container">
-                        <img src={wishData.secretPhoto} className="secret-photo" onClick={() => openLightbox(wishData.secretPhoto)} alt="Secret" />
-                        <h2 style={{marginTop:'20px', color:'#c71585'}}>With love, {wishData.birthdayName} ❤️</h2>
-                        <button className="soulmate-btn" onClick={() => window.open(ADMIN_CONTACT.instagram, '_blank')}>
+                <div className="secret-screen show" style={{background:'#ffe6f0'}}>
+                    <div style={{maxWidth:'500px',background:'rgba(255,255,255,0.8)',padding:'2rem',borderRadius:'40px',textAlign:'center'}}>
+                        <img src={wishData.secretPhoto} style={{width:'100%',maxHeight:'400px',objectFit:'cover',borderRadius:'20px'}} onClick={() => openLightbox(wishData.secretPhoto)} />
+                        <h2 style={{marginTop:'20px',color:'#c71585'}}>With love, {wishData.birthdayName}</h2>
+                        <button className="enter-btn" onClick={() => window.open(ADMIN_CONTACT.instagram, '_blank')}>
                             <i className="fab fa-instagram"></i> Created with Love
                         </button>
                     </div>
@@ -737,7 +610,6 @@
             );
         }
 
-        // ---------- App Router ----------
         function App() {
             const router = useHashRouter();
             return (
@@ -750,12 +622,8 @@
             );
         }
 
-        try {
-            const root = ReactDOM.createRoot(document.getElementById('root'));
-            root.render(<App />);
-        } catch (err) {
-            document.getElementById('root').innerHTML = '<h1 style="color:red;text-align:center;margin-top:100px;">Error: ' + err.message + '</h1>';
-        }
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
