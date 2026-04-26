@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +24,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Comic+Neue:wght@700&family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* ============ আপনার পছন্দের ডিজাইন ============ */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Quicksand',sans-serif; overflow-x:hidden; color:#4a4a4a; min-height:100vh; }
         .video-bg { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-2; filter:brightness(0.8); animation:slowZoom 20s infinite alternate; }
@@ -59,7 +57,6 @@
         .form-group textarea { height:80px; }
         .submit-btn { background:linear-gradient(45deg,#ff69b4,#ff99cc); color:white; border:none; padding:12px 30px; border-radius:30px; font-size:18px; cursor:pointer; width:100%; }
         .logout-btn { background: #ccc; border: none; padding: 10px 20px; border-radius: 20px; margin-top: 10px; cursor: pointer; }
-        /* মূল উইশ স্ক্রিন স্টাইল (আগের মতোই) */
         .countdown-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg, rgba(255,209,220,0.4), rgba(230,230,250,0.4)); backdrop-filter:blur(8px); z-index:1000; transition:1s; text-align:center; padding:20px; }
         .countdown-title { font-size:clamp(24px,5vw,40px); color:#fff; margin-bottom:20px; text-shadow:2px 2px 8px rgba(0,0,0,0.3); font-weight:600; letter-spacing:1px; }
         .countdown-box { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
@@ -154,22 +151,20 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // ======================== YOUR CONFIGURATION ========================
-        // Firebase কনফিগ (আপনার Firebase Console থেকে কপি করবেন)
+        // ======================== YOUR CONFIGURATION (তোমার তথ্য) ========================
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyC18r8GPtooLmUBnOGRBQUIKOodPvHRX8o",
+            authDomain: "birthday-website-33f71.firebaseapp.com",
+            projectId: "birthday-website-33f71",
+            storageBucket: "birthday-website-33f71.firebasestorage.app",
+            messagingSenderId: "800374135757",
+            appId: "1:800374135757:web:2b4a058f708972e3e10284",
+            measurementId: "G-T3JH3J4N87"
         };
-        // Cloudinary কনফিগ
-        const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUDINARY_CLOUD_NAME";
+        const CLOUDINARY_CLOUD_NAME = "dpctt0wao";
         const CLOUDINARY_UPLOAD_PRESET = "wish_uploads";
         // ===================================================================
 
-        // Firebase ইনিশিয়ালাইজ
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -177,7 +172,6 @@
         const { useState, useEffect, useRef, useCallback } = React;
         const { HashRouter, Routes, Route, useNavigate, useParams } = ReactRouterDOM;
 
-        /* ========== কন্টাক্ট ফ্লোটিং বাটন ========== */
         function ContactFloatingButton({ wishData }) {
             const [open, setOpen] = useState(false);
             const photo = wishData?.contactPhoto || 'https://via.placeholder.com/50';
@@ -198,7 +192,6 @@
             );
         }
 
-        /* ========== লগইন পেজ ========== */
         function LoginPage() {
             const navigate = useNavigate();
             const login = async () => {
@@ -226,7 +219,6 @@
             );
         }
 
-        /* ========== ড্যাশবোর্ড (কাস্টমাইজেশন ফর্ম) ========== */
         function Dashboard() {
             const navigate = useNavigate();
             const [form, setForm] = useState({
@@ -312,128 +304,41 @@
                         <button className="logout-btn" onClick={logout}>Logout</button>
                     </div>
                     <div className="form-container">
-                        <div className="form-group">
-                            <label>Birthday Person's Name</label>
-                            <input name="birthdayName" value={form.birthdayName} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Birth Date (Month/Day)</label>
-                            <input type="date" onChange={e => {
-                                const d = new Date(e.target.value);
-                                setForm(prev => ({...prev, month: d.getMonth(), day: d.getDate()}));
-                            }} />
-                            <input type="time" onChange={e => {
-                                const [h,m] = e.target.value.split(':');
-                                setForm(prev => ({...prev, hour: parseInt(h), minute: parseInt(m)}));
-                            }} />
-                        </div>
-                        <div className="form-group">
-                            <label>Age (Number of candles)</label>
-                            <input type="number" name="age" value={form.age} onChange={e => setForm(prev => ({...prev, age: parseInt(e.target.value)}))} />
-                        </div>
-                        <div className="form-group">
-                            <label>Greeting Message</label>
-                            <textarea name="greetingText" value={form.greetingText} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>4 Reasons (one per line, format: emoji text)</label>
-                            <textarea onChange={e => {
-                                const lines = e.target.value.split('\n').filter(l => l.trim());
-                                const newReasons = lines.map(line => {
-                                    const parts = line.trim().split(' ');
-                                    const emoji = parts[0];
-                                    const text = parts.slice(1).join(' ');
-                                    return { emoji: emoji || '💖', text: text || line };
-                                });
-                                if (newReasons.length <= 4) setForm(prev => ({...prev, reasons: newReasons}));
-                            }} defaultValue={form.reasons.map(r => r.emoji + ' ' + r.text).join('\n')} />
-                        </div>
-                        <div className="form-group">
-                            <label>Photos (URLs with date:caption, separated by commas)</label>
-                            <textarea onChange={e => {
-                                const items = e.target.value.split(',').map(item => {
-                                    const parts = item.split(':');
-                                    return { url: parts[0]?.trim(), date: parts[1]?.trim(), caption: parts[2]?.trim() };
-                                });
-                                setForm(prev => ({...prev, photos: items}));
-                            }} defaultValue={form.photos.map(p => `${p.url}:${p.date}:${p.caption}`).join(',')} />
-                            <button onClick={() => uploadWidget(url => 
-                                setForm(prev => ({...prev, photos: [...prev.photos, { url, date: 'New Memory', caption: 'Caption' }] })
-                            ))}>Upload Photo</button>
-                        </div>
-                        <div className="form-group">
-                            <label>Videos (URL:title, comma separated)</label>
-                            <textarea onChange={e => {
-                                const items = e.target.value.split(',').map(item => {
-                                    const [url, title] = item.split(':');
-                                    return { url: url?.trim(), title: title?.trim() || 'Video' };
-                                });
-                                setForm(prev => ({...prev, videos: items}));
-                            }} defaultValue={form.videos.map(v => `${v.url}:${v.title}`).join(',')} />
-                        </div>
-                        <div className="form-group">
-                            <label>Countdown Audio URL</label>
-                            <input name="countdownAudio" value={form.countdownAudio} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Birthday Wish Audio URL</label>
-                            <input name="wishAudio" value={form.wishAudio} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Love Letter</label>
-                            <textarea name="letter" value={form.letter} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Secret Photo URL</label>
-                            <input name="secretPhoto" value={form.secretPhoto} onChange={handleChange} />
-                            <button onClick={() => uploadWidget(url => setForm(prev => ({...prev, secretPhoto: url})))}>Upload</button>
-                        </div>
-                        <div className="form-group">
-                            <label>Facebook Profile</label>
-                            <input name="facebook" value={form.facebook} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Instagram Profile</label>
-                            <input name="instagram" value={form.instagram} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Contact Icon Photo URL</label>
-                            <input name="contactPhoto" value={form.contactPhoto} onChange={handleChange} />
-                            <button onClick={() => uploadWidget(url => setForm(prev => ({...prev, contactPhoto: url})))}>Upload</button>
-                        </div>
-                        <button className="submit-btn" onClick={handleSubmit} disabled={saving}>
-                            {saving ? 'Creating...' : 'Create My Wish Page'}
-                        </button>
+                        <div className="form-group"><label>Birthday Person's Name</label><input name="birthdayName" value={form.birthdayName} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Birth Date</label><input type="date" onChange={e => { const d = new Date(e.target.value); setForm(prev => ({...prev, month: d.getMonth(), day: d.getDate()})); }} /><input type="time" onChange={e => { const [h,m] = e.target.value.split(':'); setForm(prev => ({...prev, hour: parseInt(h), minute: parseInt(m)})); }} /></div>
+                        <div className="form-group"><label>Age (Candles)</label><input type="number" name="age" value={form.age} onChange={e => setForm(prev => ({...prev, age: parseInt(e.target.value)}))} /></div>
+                        <div className="form-group"><label>Greeting Message</label><textarea name="greetingText" value={form.greetingText} onChange={handleChange} /></div>
+                        <div className="form-group"><label>4 Reasons (emoji text per line)</label><textarea onChange={e => { const lines = e.target.value.split('\n').filter(l=>l.trim()); const newReasons = lines.map(line => { const parts = line.trim().split(' '); const emoji = parts[0]; const text = parts.slice(1).join(' '); return { emoji: emoji || '💖', text: text || line }; }); if (newReasons.length <= 4) setForm(prev => ({...prev, reasons: newReasons})); }} defaultValue={form.reasons.map(r => r.emoji + ' ' + r.text).join('\n')} /></div>
+                        <div className="form-group"><label>Photos (url:date:caption, comma separated)</label><textarea onChange={e => { const items = e.target.value.split(',').map(item => { const parts = item.split(':'); return { url: parts[0]?.trim(), date: parts[1]?.trim(), caption: parts[2]?.trim() }; }); setForm(prev => ({...prev, photos: items})); }} defaultValue={form.photos.map(p => `${p.url}:${p.date}:${p.caption}`).join(',')} /><button onClick={() => uploadWidget(url => setForm(prev => ({...prev, photos: [...prev.photos, { url, date: 'New Memory', caption: 'Caption' }] })))}>Upload Photo</button></div>
+                        <div className="form-group"><label>Videos (url:title, comma separated)</label><textarea onChange={e => { const items = e.target.value.split(',').map(item => { const [url, title] = item.split(':'); return { url: url?.trim(), title: title?.trim() || 'Video' }; }); setForm(prev => ({...prev, videos: items})); }} defaultValue={form.videos.map(v => `${v.url}:${v.title}`).join(',')} /></div>
+                        <div className="form-group"><label>Countdown Audio URL</label><input name="countdownAudio" value={form.countdownAudio} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Birthday Wish Audio URL</label><input name="wishAudio" value={form.wishAudio} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Love Letter</label><textarea name="letter" value={form.letter} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Secret Photo URL</label><input name="secretPhoto" value={form.secretPhoto} onChange={handleChange} /><button onClick={() => uploadWidget(url => setForm(prev => ({...prev, secretPhoto: url})))}>Upload</button></div>
+                        <div className="form-group"><label>Facebook Profile</label><input name="facebook" value={form.facebook} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Instagram Profile</label><input name="instagram" value={form.instagram} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Contact Icon Photo URL</label><input name="contactPhoto" value={form.contactPhoto} onChange={handleChange} /><button onClick={() => uploadWidget(url => setForm(prev => ({...prev, contactPhoto: url})))}>Upload</button></div>
+                        <button className="submit-btn" onClick={handleSubmit} disabled={saving}>{saving ? 'Creating...' : 'Create My Wish Page'}</button>
                     </div>
                 </div>
             );
         }
 
-        /* ========== পাবলিক উইশ পেজ (সকল অ্যানিমেশন) ========== */
         function WishPage() {
             const { wishId } = useParams();
             const [wishData, setWishData] = useState(null);
             const [loading, setLoading] = useState(true);
-            const [currentStep, setCurrentStep] = useState('countdown'); // countdown, greeting, cake, reasons, photo, video, letter, secret
+            const [currentStep, setCurrentStep] = useState('countdown');
             const countdownAudioRef = useRef(null);
             const wishAudioRef = useRef(null);
 
             useEffect(() => {
-                const fetch = async () => {
-                    try {
-                        const doc = await db.collection('wishes').doc(wishId).get();
-                        if (doc.exists) setWishData(doc.data());
-                        else alert('Invalid wish page');
-                    } catch (e) {
-                        alert('Error loading page');
-                    } finally {
-                        setLoading(false);
-                    }
-                };
-                fetch();
+                db.collection('wishes').doc(wishId).get().then(doc => {
+                    if (doc.exists) setWishData(doc.data());
+                    else alert('Invalid wish page');
+                }).catch(() => alert('Error loading')).finally(() => setLoading(false));
             }, [wishId]);
 
-            // ফ্লোটিং এলিমেন্ট ক্রিয়েট (আগের মতো)
             useEffect(() => {
                 const interval = setInterval(() => {
                     const container = document.querySelector('.floating-elements');
@@ -451,48 +356,33 @@
                 return () => clearInterval(interval);
             }, []);
 
-            if (loading) return <div style={{textAlign:'center', marginTop:'100px'}}>Loading...</div>;
-            if (!wishData) return <div style={{textAlign:'center', marginTop:'100px'}}>Invalid wish page</div>;
-
-            const openLightbox = (src) => {
-                document.getElementById('lightboxImg').src = src;
-                document.getElementById('lightbox').classList.add('show');
-            };
-            const closeLightbox = () => document.getElementById('lightbox').classList.remove('show');
-
-            // কেক স্টেট
-            const [cakeCut, setCakeCut] = useState(false);
-            const [candlesBlown, setCandlesBlown] = useState(0);
-            const totalCandles = wishData.age || 17;
-
-            // কাউন্টডাউন দেখাবে যতক্ষণ না টার্গেট টাইম হয়
             useEffect(() => {
+                if (!wishData) return;
                 const timer = setInterval(() => {
                     const now = new Date();
                     const birthday = new Date(now.getFullYear(), wishData.month, wishData.day, wishData.hour, wishData.minute);
-                    if (now >= birthday) {
-                        setCurrentStep('greeting');
-                        clearInterval(timer);
-                    }
+                    if (now >= birthday) { setCurrentStep('greeting'); clearInterval(timer); }
                 }, 1000);
                 return () => clearInterval(timer);
             }, [wishData]);
 
-            // অডিও হ্যান্ডলিং
             useEffect(() => {
-                if (currentStep === 'countdown' && wishData.countdownAudio) {
+                if (currentStep === 'countdown' && wishData?.countdownAudio) {
                     countdownAudioRef.current = new Audio(wishData.countdownAudio);
                     countdownAudioRef.current.play().catch(() => {});
                 }
-                if (currentStep !== 'countdown' && countdownAudioRef.current) {
-                    countdownAudioRef.current.pause();
-                    countdownAudioRef.current = null;
-                }
-                if (currentStep === 'greeting' && wishData.wishAudio) {
+                if (currentStep !== 'countdown' && countdownAudioRef.current) { countdownAudioRef.current.pause(); countdownAudioRef.current = null; }
+                if (currentStep === 'greeting' && wishData?.wishAudio) {
                     wishAudioRef.current = new Audio(wishData.wishAudio);
                     wishAudioRef.current.play().catch(() => {});
                 }
             }, [currentStep, wishData]);
+
+            if (loading) return <div style={{textAlign:'center', marginTop:'100px'}}>Loading...</div>;
+            if (!wishData) return <div style={{textAlign:'center', marginTop:'100px'}}>Invalid wish page</div>;
+
+            const openLightbox = (src) => { document.getElementById('lightboxImg').src = src; document.getElementById('lightbox').classList.add('show'); };
+            const closeLightbox = () => document.getElementById('lightbox').classList.remove('show');
 
             return (
                 <div>
@@ -500,19 +390,9 @@
                     <div className="floating-elements"></div>
                     <div className="magic-sparkles"></div>
                     <div className="floating-hearts" id="floatingHearts"></div>
+                    <div id="lightbox" className="lightbox" onClick={closeLightbox}><span className="close">&times;</span><img id="lightboxImg" src="" alt="lightbox" /></div>
 
-                    <div id="lightbox" className="lightbox" onClick={closeLightbox}>
-                        <span className="close">&times;</span>
-                        <img id="lightboxImg" src="" alt="lightbox" />
-                    </div>
-
-                    {/* কাউন্টডাউন স্ক্রিন */}
-                    {currentStep === 'countdown' && (
-                        <div className="countdown-screen" style={{display:'flex'}}>
-                            <CountdownContent wishData={wishData} />
-                        </div>
-                    )}
-                    {/* গ্রিটিং স্ক্রিন */}
+                    {currentStep === 'countdown' && <CountdownContent wishData={wishData} />}
                     {currentStep === 'greeting' && (
                         <div className="greeting-screen show">
                             <h1>Happy Birthday {wishData.birthdayName} ❤️🎂💫</h1>
@@ -520,47 +400,16 @@
                             <button className="enter-btn" onClick={() => setCurrentStep('cake')}>Click to enter your world 💕</button>
                         </div>
                     )}
-                    {/* কেক স্ক্রিন */}
-                    {currentStep === 'cake' && (
-                        <div className="cake-screen show">
-                            <CakeScreen wishData={wishData} onNext={() => setCurrentStep('reasons')} />
-                        </div>
-                    )}
-                    {/* রিজন স্ক্রিন */}
-                    {currentStep === 'reasons' && (
-                        <div className="reasons-screen show">
-                            <ReasonsScreen wishData={wishData} onNext={() => setCurrentStep('photo')} />
-                        </div>
-                    )}
-                    {/* ফটো স্ক্রিন */}
-                    {currentStep === 'photo' && (
-                        <div className="photo-screen show">
-                            <PhotoScreen wishData={wishData} openLightbox={openLightbox} onNext={() => setCurrentStep('video')} />
-                        </div>
-                    )}
-                    {/* ভিডিও স্ক্রিন */}
-                    {currentStep === 'video' && (
-                        <div className="video-screen show">
-                            <VideoScreen wishData={wishData} onNext={() => setCurrentStep('letter')} />
-                        </div>
-                    )}
-                    {/* লেটার স্ক্রিন */}
-                    {currentStep === 'letter' && (
-                        <div className="letter-screen show">
-                            <LetterScreen wishData={wishData} onNext={() => setCurrentStep('secret')} />
-                        </div>
-                    )}
-                    {/* সিক্রেট স্ক্রিন */}
-                    {currentStep === 'secret' && (
-                        <div className="secret-screen show">
-                            <SecretScreen wishData={wishData} openLightbox={openLightbox} />
-                        </div>
-                    )}
+                    {currentStep === 'cake' && <CakeScreen wishData={wishData} onNext={() => setCurrentStep('reasons')} />}
+                    {currentStep === 'reasons' && <ReasonsScreen wishData={wishData} onNext={() => setCurrentStep('photo')} />}
+                    {currentStep === 'photo' && <PhotoScreen wishData={wishData} openLightbox={openLightbox} onNext={() => setCurrentStep('video')} />}
+                    {currentStep === 'video' && <VideoScreen wishData={wishData} onNext={() => setCurrentStep('letter')} />}
+                    {currentStep === 'letter' && <LetterScreen wishData={wishData} onNext={() => setCurrentStep('secret')} />}
+                    {currentStep === 'secret' && <SecretScreen wishData={wishData} openLightbox={openLightbox} />}
                 </div>
             );
         }
 
-        /* কাউন্টডাউন কম্পোনেন্ট */
         function CountdownContent({ wishData }) {
             const [time, setTime] = useState({ days:0, hours:0, mins:0, secs:0 });
             useEffect(() => {
@@ -569,16 +418,17 @@
                     const birthday = new Date(now.getFullYear(), wishData.month, wishData.day, wishData.hour, wishData.minute);
                     if (now >= birthday) return;
                     const diff = birthday - now;
-                    const days = Math.floor(diff / (1000*60*60*24));
-                    const hours = Math.floor((diff / (1000*60*60)) % 24);
-                    const mins = Math.floor((diff / (1000*60)) % 60);
-                    const secs = Math.floor((diff / 1000) % 60);
-                    setTime({ days, hours, mins, secs });
+                    setTime({
+                        days: Math.floor(diff / (1000*60*60*24)),
+                        hours: Math.floor((diff / (1000*60*60)) % 24),
+                        mins: Math.floor((diff / (1000*60)) % 60),
+                        secs: Math.floor((diff / 1000) % 60)
+                    });
                 }, 1000);
                 return () => clearInterval(interval);
             }, [wishData]);
             return (
-                <>
+                <div className="countdown-screen" style={{display:'flex'}}>
                     <h1 className="countdown-title">Wait for countdown Please...⌛</h1>
                     <div className="countdown-box">
                         <div className="count-item"><span className="count-number">{String(time.days).padStart(2,'0')}</span><span className="count-label">Days</span></div>
@@ -586,194 +436,103 @@
                         <div className="count-item"><span className="count-number">{String(time.mins).padStart(2,'0')}</span><span className="count-label">Mins</span></div>
                         <div className="count-item"><span className="count-number">{String(time.secs).padStart(2,'0')}</span><span className="count-label">Secs</span></div>
                     </div>
-                    <div className="countdown-message">⏰ Time-lap at {wishData.day} {getMonthName(wishData.month)} {wishData.hour}:{String(wishData.minute).padStart(2,'0')}</div>
-                </>
+                    <div className="countdown-message">⏰ Time-lap at {wishData.day} {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][wishData.month]} {wishData.hour}:{String(wishData.minute).padStart(2,'0')}</div>
+                </div>
             );
         }
-        function getMonthName(index) {
-            return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][index];
-        }
 
-        /* কেক স্ক্রিন কম্পোনেন্ট */
         function CakeScreen({ wishData, onNext }) {
             const [cut, setCut] = useState(false);
             const [blown, setBlown] = useState(0);
             const total = wishData.age;
-            const [microInterval, setMicroInterval] = useState(null);
-
             useEffect(() => {
-                // মাইক্রোফোন দিয়ে ফোঁকা (সিম্পল ভার্সন)
                 let interval;
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                    .then(stream => {
-                        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                        const analyser = audioCtx.createAnalyser();
-                        const source = audioCtx.createMediaStreamSource(stream);
-                        source.connect(analyser);
-                        analyser.fftSize = 256;
-                        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-                        interval = setInterval(() => {
-                            if (cut || blown >= total) return;
-                            analyser.getByteFrequencyData(dataArray);
-                            const avg = dataArray.reduce((a,b)=>a+b,0)/dataArray.length;
-                            if (avg > 50) {
-                                setBlown(prev => {
-                                    const newBlown = Math.min(prev + 2, total);
-                                    if (newBlown === total) confetti({ particleCount:100, spread:70 });
-                                    return newBlown;
-                                });
-                            }
-                        }, 150);
-                    })
-                    .catch(() => {});
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const analyser = audioCtx.createAnalyser();
+                    const source = audioCtx.createMediaStreamSource(stream);
+                    source.connect(analyser);
+                    analyser.fftSize = 256;
+                    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    interval = setInterval(() => {
+                        if (cut || blown >= total) return;
+                        analyser.getByteFrequencyData(dataArray);
+                        if (dataArray.reduce((a,b)=>a+b,0)/dataArray.length > 50) {
+                            setBlown(prev => { const newB = Math.min(prev+2, total); if (newB === total) confetti({ particleCount:100, spread:70 }); return newB; });
+                        }
+                    }, 150);
+                }).catch(() => {});
                 return () => { if (interval) clearInterval(interval); };
             }, [cut, total]);
-
-            const blowCandle = (index) => {
-                if (cut || index < blown) return;
-                setBlown(index+1);
-                confetti({ particleCount:5, spread:30 });
-            };
-
-            const cutCake = () => {
-                if (blown !== total) return;
-                setCut(true);
-                confetti({ particleCount:150, spread:80 });
-            };
-
+            const blowCandle = (i) => { if (!cut && i >= blown) { setBlown(i+1); confetti({ particleCount:5, spread:30 }); } };
             return (
-                <div className="cake-container">
-                    <div className="cake-emoji">{cut ? '🍰' : '🎂'}</div>
-                    <div className="candles">
-                        {Array.from({length: total}).map((_, i) => (
-                            <span key={i} className={`candle ${i < blown ? 'blown' : ''}`} onClick={() => blowCandle(i)}>🕯️</span>
-                        ))}
+                <div className="cake-screen show">
+                    <div className="cake-container">
+                        <div className="cake-emoji">{cut ? '🍰' : '🎂'}</div>
+                        <div className="candles">{Array.from({length: total}).map((_,i)=>(<span key={i} className={`candle ${i<blown?'blown':''}`} onClick={()=>blowCandle(i)}>🕯️</span>))}</div>
+                        <div className="cake-status">{cut ? '🎉 Cake cut! Happy Birthday! 🎉' : `${total-blown} candles burning - Blow or tap`}</div>
+                        {!cut && <button className="cut-btn" disabled={blown !== total} onClick={()=>{ setCut(true); confetti({ particleCount:150, spread:80 }); }}>🍰 Cut Cake</button>}
+                        {cut && <button className="cake-next-btn" onClick={onNext}>Enter your storyline 💫</button>}
                     </div>
-                    <div className="cake-status">
-                        {cut ? '🎉 Cake cut! Happy Birthday! 🎉' : `${total - blown} candles burning - Blow or tap`}
-                    </div>
-                    {!cut && (
-                        <button className="cut-btn" disabled={blown !== total} onClick={cutCake}>🍰 Cut Cake</button>
-                    )}
-                    {cut && <button className="cake-next-btn" onClick={onNext}>Enter your storyline 💫</button>}
                 </div>
             );
         }
 
-        /* রিজন স্ক্রিন */
         function ReasonsScreen({ wishData, onNext }) {
             const [index, setIndex] = useState(0);
             const reasons = wishData.reasons || [];
-            const handleClick = () => {
-                if (index < reasons.length - 1) {
-                    setIndex(index + 1);
-                } else {
-                    onNext();
-                }
-            };
-            if (reasons.length === 0) {
-                setTimeout(onNext, 100);
-                return null;
-            }
+            if (!reasons.length) { useEffect(() => { setTimeout(onNext, 100); }, []); return null; }
+            const handleClick = () => index < reasons.length-1 ? setIndex(index+1) : onNext();
             const r = reasons[index];
             return (
-                <>
+                <div className="reasons-screen show">
                     <div className="reasons-header"><h1>Happy Birthday {wishData.birthdayName}.. 💖</h1></div>
-                    <div className="reasons-container">
-                        <div className="reason-card">
-                            <div className="reason-text">{r.emoji} {r.text}</div>
-                            <div className="reason-emoji">{r.emoji}</div>
-                        </div>
-                    </div>
+                    <div className="reasons-container"><div className="reason-card"><div className="reason-text">{r.emoji} {r.text}</div><div className="reason-emoji">{r.emoji}</div></div></div>
                     <div className="reason-counter">Reason {index+1} of {reasons.length}</div>
-                    <button className={`reasons-btn ${index === reasons.length-1 ? 'story-mode' : ''}`} onClick={handleClick}>
-                        {index === reasons.length-1 ? "You're the BESTEST ! 💖" : "Click Here... 💕"}
-                    </button>
-                </>
+                    <button className={`reasons-btn ${index===reasons.length-1?'story-mode':''}`} onClick={handleClick}>{index===reasons.length-1 ? "You're the BESTEST ! 💖" : "Click Here... 💕"}</button>
+                </div>
             );
         }
 
-        /* ফটো স্ক্রিন */
         function PhotoScreen({ wishData, openLightbox, onNext }) {
             return (
-                <>
-                    <div className="photo-header">
-                        <h1>Our Beautiful Moments Together</h1>
-                        <p>Every moment spent with you has been magical. Let's cherish these precious memories cuty...</p>
-                    </div>
-                    <div className="photo-container">
-                        {wishData.photos?.map((p, i) => (
-                            <div key={i} className="photo-card" onClick={() => openLightbox(p.url)}>
-                                <img src={p.url} className="photo-img" />
-                                <div className="photo-date">{p.date}</div>
-                                <div className="photo-caption">{p.caption}</div>
-                            </div>
-                        ))}
-                    </div>
+                <div className="photo-screen show">
+                    <div className="photo-header"><h1>Our Beautiful Moments Together</h1><p>Every moment spent with you has been magical...</p></div>
+                    <div className="photo-container">{wishData.photos?.map((p,i)=>(<div key={i} className="photo-card" onClick={()=>openLightbox(p.url)}><img src={p.url} className="photo-img"/><div className="photo-date">{p.date}</div><div className="photo-caption">{p.caption}</div></div>))}</div>
                     <button className="photo-next-btn" onClick={onNext}>Again Your Storylane 🎥</button>
-                </>
+                </div>
             );
         }
 
-        /* ভিডিও স্ক্রিন */
         function VideoScreen({ wishData, onNext }) {
             return (
-                <>
+                <div className="video-screen show">
                     <h2>A Special Video Message</h2>
-                    <div className="video-container">
-                        <div className="video-grid">
-                            {wishData.videos?.map((v, i) => (
-                                <div key={i} className="video-card">
-                                    <h3>{v.title}</h3>
-                                    <div className="video-wrapper">
-                                        <video controls>
-                                            <source src={v.url} type="video/mp4" />
-                                        </video>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <button className="video-next-btn" onClick={onNext}>See your letter 💌</button>
-                    </div>
-                </>
+                    <div className="video-container"><div className="video-grid">{wishData.videos?.map((v,i)=>(<div key={i} className="video-card"><h3>{v.title}</h3><div className="video-wrapper"><video controls><source src={v.url} type="video/mp4"/></video></div></div>))}</div>
+                    <button className="video-next-btn" onClick={onNext}>See your letter 💌</button></div>
+                </div>
             );
         }
 
-        /* লেটার স্ক্রিন */
         function LetterScreen({ wishData, onNext }) {
             return (
-                <div className="letter-container">
-                    <h2>A Letter for You Babiee 💌</h2>
-                    <div className="letter-content">{wishData.letter}</div>
-                    <button className="letter-return-btn" onClick={onNext}>Again, Happy Birthday My Honey</button>
+                <div className="letter-screen show">
+                    <div className="letter-container"><h2>A Letter for You Babiee 💌</h2><div className="letter-content">{wishData.letter}</div><button className="letter-return-btn" onClick={onNext}>Again, Happy Birthday My Honey</button></div>
                 </div>
             );
         }
 
-        /* সিক্রেট স্ক্রিন */
         function SecretScreen({ wishData, openLightbox }) {
             return (
-                <div className="secret-container">
-                    <img src={wishData.secretPhoto} className="secret-photo" onClick={() => openLightbox(wishData.secretPhoto)} />
-                    <p style={{marginTop:'20px', fontWeight:'bold'}}>With love, {wishData.birthdayName}</p>
-                    <button className="soulmate-btn" onClick={() => window.open(wishData.instagram || 'https://instagram.com', '_blank')}>
-                        <i className="fab fa-instagram"></i> See Your Soulmate
-                    </button>
+                <div className="secret-screen show">
+                    <div className="secret-container"><img src={wishData.secretPhoto} className="secret-photo" onClick={()=>openLightbox(wishData.secretPhoto)}/><p style={{marginTop:'20px', fontWeight:'bold'}}>With love, {wishData.birthdayName}</p>
+                    <button className="soulmate-btn" onClick={()=>window.open(wishData.instagram||'https://instagram.com','_blank')}><i className="fab fa-instagram"></i> See Your Soulmate</button></div>
                 </div>
             );
         }
 
-        /* মূল অ্যাপ */
         function App() {
-            return (
-                <HashRouter>
-                    <Routes>
-                        <Route path="/" element={<LoginPage />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/wish/:wishId" element={<WishPage />} />
-                    </Routes>
-                </HashRouter>
-            );
+            return (<HashRouter><Routes><Route path="/" element={<LoginPage />} /><Route path="/dashboard" element={<Dashboard />} /><Route path="/wish/:wishId" element={<WishPage />} /></Routes></HashRouter>);
         }
 
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
