@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Birthday Wish Hub 💫</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-router-dom@6/dist/umd/react-router-dom.production.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-router-dom@6.20.1/dist/umd/react-router-dom.production.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.23.9/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -50,697 +50,557 @@
         .form-group textarea { height:80px; }
         .submit-btn { background:linear-gradient(45deg,#ff69b4,#ff99cc); color:white; border:none; padding:12px 30px; border-radius:30px; font-size:18px; cursor:pointer; width:100%; }
         .logout-btn { background: #ccc; border: none; padding: 10px 20px; border-radius: 20px; margin-top: 10px; cursor: pointer; }
-        .countdown-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg, rgba(255,209,220,0.4), rgba(230,230,250,0.4)); backdrop-filter:blur(8px); z-index:1000; transition:1s; text-align:center; padding:20px; }
-        .countdown-title { font-size:clamp(24px,5vw,40px); color:#fff; margin-bottom:20px; text-shadow:2px 2px 8px rgba(0,0,0,0.3); font-weight:600; letter-spacing:1px; }
+        .countdown-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg, rgba(255,209,220,0.4), rgba(230,230,250,0.4)); backdrop-filter:blur(8px); z-index:1000; text-align:center; padding:20px; }
+        .countdown-title { font-size:clamp(24px,5vw,40px); color:#fff; margin-bottom:20px; text-shadow:2px 2px 8px rgba(0,0,0,0.3); font-weight:600; }
         .countdown-box { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
-        .count-item { background:rgba(255,255,255,0.3); padding:12px 15px; border-radius:20px; min-width:70px; border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(5px); }
-        .count-number { font-size:clamp(28px,6vw,40px); font-weight:800; color:#fff; display:block; text-shadow:2px 2px 8px rgba(0,0,0,0.3); }
-        .count-label { font-size:12px; color:rgba(255,255,255,0.95); letter-spacing:1px; text-shadow:1px 1px 4px rgba(0,0,0,0.3); }
-        .countdown-message { font-size:clamp(16px,4vw,24px); color:#fff; margin-top:20px; font-weight:400; text-shadow:2px 2px 8px rgba(0,0,0,0.3); }
+        .count-item { background:rgba(255,255,255,0.3); padding:12px 15px; border-radius:20px; min-width:70px; border:1px solid rgba(255,255,255,0.4); }
+        .count-number { font-size:clamp(28px,6vw,40px); font-weight:800; color:#fff; display:block; }
+        .count-label { font-size:12px; color:rgba(255,255,255,0.95); }
+        .countdown-message { font-size:clamp(16px,4vw,24px); color:#fff; margin-top:20px; }
         .greeting-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(-45deg,#fee9f7,#e8f5fe,#fef2e8,#f0ffe8); background-size:400% 400%; animation:gradientBG 15s ease infinite; z-index:900; padding:20px; text-align:center; }
         .greeting-screen.show { display:flex; }
         @keyframes gradientBG { 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
         .greeting-screen h1 { font-family:'Bubblegum Sans',cursive; font-size:clamp(3rem,10vw,4.5rem); color:#d4145a; text-shadow:2px 2px 8px rgba(255,255,255,0.8); margin-bottom:2rem; animation:bounce 1s ease infinite; }
         @keyframes bounce { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
-        .greeting-text { font-size:1.5rem; color:#4b0082; margin-bottom:3rem; min-height:2em; text-shadow:1px 1px 4px rgba(255,255,255,0.8); font-weight:600; }
-        .enter-btn { padding:1rem 2rem; font-size:1.2rem; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; cursor:pointer; box-shadow:0 0 15px rgba(255,105,180,0.5); transition:transform 0.3s,box-shadow 0.3s; font-family:'Comic Neue',cursive; font-weight:700; text-shadow:1px 1px 2px rgba(0,0,0,0.3); }
-        .enter-btn:hover { transform:scale(1.1); box-shadow:0 0 25px rgba(255,105,180,0.7); }
-        .cake-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); z-index:800; padding:20px; text-align:center; }
+        .greeting-text { font-size:1.5rem; color:#4b0082; margin-bottom:3rem; }
+        .enter-btn { padding:1rem 2rem; font-size:1.2rem; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; cursor:pointer; box-shadow:0 0 15px rgba(255,105,180,0.5); font-family:'Comic Neue',cursive; font-weight:700; }
+        .cake-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); z-index:800; padding:20px; }
         .cake-screen.show { display:flex; }
-        .cake-container { background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); padding:30px 20px; border-radius:40px; border:1px solid rgba(255,255,255,0.3); max-width:500px; width:100%; box-shadow:0 15px 35px rgba(0,0,0,0.2); }
-        .cake-emoji { font-size:clamp(80px,18vw,110px); text-align:center; filter:drop-shadow(0 10px 20px rgba(255,105,180,0.4)); animation:softBounce 2s infinite; }
+        .cake-container { background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); padding:30px 20px; border-radius:40px; border:1px solid rgba(255,255,255,0.3); max-width:500px; width:100%; }
+        .cake-emoji { font-size:clamp(80px,18vw,110px); text-align:center; animation:softBounce 2s infinite; }
         @keyframes softBounce { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
-        .candles { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; margin:20px 0; min-height:80px; }
-        .candle { cursor:pointer; transition:0.2s; animation:flicker 0.5s infinite alternate; display:inline-block; font-size:clamp(30px,8vw,42px); filter:drop-shadow(0 0 8px gold); }
+        .candles { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:20px 0; }
+        .candle { cursor:pointer; font-size:clamp(30px,8vw,42px); animation:flicker 0.5s infinite alternate; display:inline-block; filter:drop-shadow(0 0 8px gold); }
         .candle.blown { opacity:0.2; filter:grayscale(1); pointer-events:none; animation:none; }
         @keyframes flicker { from{ opacity:1; transform:scale(1); } to{ opacity:0.8; transform:scale(1.1); } }
-        .cake-status { font-size:clamp(16px,4vw,20px); color:white; margin:20px 0; padding:12px; border-radius:40px; background:rgba(0,0,0,0.5); backdrop-filter:blur(5px); text-shadow:1px 1px 4px rgba(0,0,0,0.5); }
-        .cut-btn { background:linear-gradient(45deg,gold,red); color:black; font-size:clamp(20px,5vw,24px); padding:12px 25px; border:none; border-radius:40px; font-weight:bold; cursor:pointer; transition:0.3s; border:2px solid white; width:100%; box-shadow:0 8px 15px rgba(0,0,0,0.3); text-shadow:1px 1px 2px rgba(255,255,255,0.5); }
+        .cake-status { font-size:clamp(16px,4vw,20px); color:white; margin:20px 0; padding:12px; border-radius:40px; background:rgba(0,0,0,0.5); text-align:center; }
+        .cut-btn { background:linear-gradient(45deg,gold,red); color:black; font-size:clamp(20px,5vw,24px); padding:12px 25px; border:none; border-radius:40px; font-weight:bold; cursor:pointer; width:100%; border:2px solid white; }
         .cut-btn:disabled { opacity:0.3; cursor:not-allowed; }
-        .cut-btn:not(:disabled):hover { transform:scale(1.05); box-shadow:0 0 25px gold; }
-        .cake-next-btn { margin-top:20px; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(155,109,255,0.4); transition:0.3s; display:inline-block; border:2px solid white; }
+        .cake-next-btn { margin-top:20px; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; border:2px solid white; display:inline-block; }
         .reasons-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(-45deg,#ffe6e6,#e6e6ff,#ffebf5); background-size:400% 400%; animation:gradientBG 15s ease infinite; z-index:750; padding:20px; }
         .reasons-screen.show { display:flex; }
-        .reasons-header h1 { font-family:'Bubblegum Sans',cursive; font-size:clamp(2.5rem,8vw,3.5rem); color:#ff69b4; text-shadow:2px 2px 4px rgba(255,105,180,0.3); margin-bottom:2rem; animation:bounce 1s ease infinite; text-align:center; }
+        .reasons-header h1 { font-family:'Bubblegum Sans',cursive; font-size:clamp(2.5rem,8vw,3.5rem); color:#ff69b4; margin-bottom:2rem; animation:bounce 1s ease infinite; text-align:center; }
         .reasons-container { width:100%; max-width:1000px; margin:0 auto; min-height:300px; display:flex; justify-content:center; align-items:center; }
-        .reason-card { background:rgba(255,255,255,0.95); border-radius:20px; padding:2rem; box-shadow:0 10px 30px rgba(0,0,0,0.15); text-align:center; max-width:950px; width:100%; transition:transform 0.3s,box-shadow 0.3s; cursor:pointer; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.3); }
-        .reason-card:hover { transform:translateY(-5px); box-shadow:0 15px 35px rgba(255,105,180,0.2); }
-        .reason-text { font-size:1.2rem; line-height:1.4; color:#4a4a4a; margin-bottom:1rem; font-weight:500; }
+        .reason-card { background:rgba(255,255,255,0.95); border-radius:20px; padding:2rem; text-align:center; max-width:950px; width:100%; }
+        .reason-text { font-size:1.2rem; color:#4a4a4a; margin-bottom:1rem; }
         .reason-emoji { font-size:2.5rem; }
-        .reason-counter { font-size:1rem; color:#ff69b4; margin:20px 0 15px; font-weight:600; opacity:0.8; }
-        .reasons-btn { background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; padding:1rem 2rem; font-size:1.2rem; color:white; cursor:pointer; transition:all 0.3s; font-family:'Comic Neue',cursive; box-shadow:0 5px 15px rgba(255,105,180,0.3); border:2px solid rgba(255,255,255,0.8); min-width:200px; font-weight:700; }
-        .reasons-btn:hover { transform:scale(1.1); box-shadow:0 8px 25px rgba(255,105,180,0.6); }
-        .reasons-btn.story-mode { background:linear-gradient(45deg,#9b6dff,#ff6dc7); transform:scale(1.1); animation:pulse 2s infinite; }
-        @keyframes pulse { 0%,100%{ transform:scale(1.1); } 50%{ transform:scale(1.2); } }
-        .photo-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; overflow-y:auto; background:linear-gradient(135deg,#ffd1dc 0%,#e6e6fa 25%,#ffefd5 50%,#e6e6fa 75%,#ffd1dc 100%); background-size:400% 400%; animation:gradientFlow 15s ease infinite; z-index:700; padding:80px 20px 40px; }
+        .reason-counter { font-size:1rem; color:#ff69b4; margin:20px 0; }
+        .reasons-btn { background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; padding:1rem 2rem; font-size:1.2rem; color:white; cursor:pointer; font-family:'Comic Neue',cursive; min-width:200px; border:2px solid white; }
+        .photo-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; overflow-y:auto; background:linear-gradient(135deg,#ffd1dc,#e6e6fa,#ffefd5,#e6e6fa,#ffd1dc); background-size:400% 400%; animation:gradientFlow 15s ease infinite; z-index:700; padding:80px 20px 40px; }
         .photo-screen.show { display:block; }
         @keyframes gradientFlow { 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
-        .photo-header { text-align:center; margin-bottom:2rem; }
-        .photo-header h1 { font-family:'Dancing Script',cursive; font-size:3rem; color:#b0306e; text-shadow:2px 2px 8px rgba(255,255,255,0.8); margin-bottom:1rem; }
-        .photo-header p { font-size:1.2rem; max-width:600px; margin:0 auto 2rem; line-height:1.6; color:#2c3e50; font-weight:600; text-shadow:1px 1px 4px rgba(255,255,255,0.8); }
+        .photo-header h1 { font-family:'Dancing Script',cursive; font-size:3rem; color:#b0306e; text-align:center; margin-bottom:1rem; }
+        .photo-header p { font-size:1.2rem; max-width:600px; margin:0 auto 2rem; color:#2c3e50; text-align:center; }
         .photo-container { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:2rem; }
-        .photo-card { background:rgba(255,255,255,0.9); border-radius:20px; padding:1.5rem; box-shadow:0 10px 20px rgba(0,0,0,0.1); transition:all 0.5s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden; cursor:pointer; }
-        .photo-card:hover { transform:translateY(-10px) scale(1.02); box-shadow:0 15px 30px rgba(0,0,0,0.15); }
-        .photo-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(45deg,transparent,rgba(255,255,255,0.4),transparent); transform:translateX(-100%); transition:0.5s; }
-        .photo-card:hover::before { transform:translateX(100%); }
-        .photo-img { width:100%; height:250px; object-fit:cover; border-radius:15px; margin-bottom:1rem; transition:transform 0.5s ease; }
-        .photo-card:hover .photo-img { transform:scale(1.05); }
-        .photo-date { font-family:'Dancing Script',cursive; color:#c71585; font-size:1.3rem; margin-bottom:0.5rem; font-weight:700; }
-        .photo-caption { font-size:1rem; line-height:1.5; color:#2c3e50; font-weight:500; }
-        .photo-next-btn { display:block; margin:30px auto; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(155,109,255,0.4); transition:0.3s; border:2px solid white; text-align:center; max-width:300px; }
-        .video-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; overflow-y:auto; background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%); z-index:600; padding:60px 20px 40px; }
+        .photo-card { background:rgba(255,255,255,0.9); border-radius:20px; padding:1.5rem; cursor:pointer; }
+        .photo-img { width:100%; height:250px; object-fit:cover; border-radius:15px; margin-bottom:1rem; }
+        .photo-date { font-family:'Dancing Script',cursive; color:#c71585; font-size:1.3rem; margin-bottom:0.5rem; }
+        .photo-caption { font-size:1rem; color:#2c3e50; }
+        .photo-next-btn { display:block; margin:30px auto; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; border:2px solid white; max-width:300px; text-align:center; }
+        .video-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; overflow-y:auto; background:linear-gradient(135deg,#a8edea,#fed6e3); z-index:600; padding:60px 20px 40px; }
         .video-screen.show { display:flex; }
-        .video-screen h2 { font-family:'Dancing Script',cursive; font-size:2.5rem; color:#b0306e; text-shadow:2px 2px 8px rgba(255,255,255,0.8); margin-bottom:2rem; text-align:center; }
-        .video-container { max-width:1200px; width:100%; margin:0 auto; }
+        .video-screen h2 { font-family:'Dancing Script',cursive; font-size:2.5rem; color:#b0306e; margin-bottom:2rem; text-align:center; }
+        .video-container { max-width:1200px; width:100%; }
         .video-grid { display:grid; grid-template-columns:1fr; gap:30px; }
         @media (min-width:768px) { .video-grid { grid-template-columns:repeat(2,1fr); } }
         .video-card { background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); border-radius:20px; padding:20px; border:2px solid rgba(255,255,255,0.3); }
         .video-card h3 { font-size:1.3rem; color:#d4145a; margin-bottom:15px; text-align:center; }
-        .video-wrapper { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
+        .video-wrapper { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; }
         .video-wrapper video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
-        .video-next-btn { display:block; margin:40px auto 20px; padding:12px 30px; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(255,105,180,0.4); transition:0.3s; border:2px solid white; max-width:300px; }
-        .letter-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#fdfbfb 0%,#ebedee 100%); z-index:500; padding:20px; }
+        .video-next-btn { display:block; margin:40px auto 20px; padding:12px 30px; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; border:2px solid white; max-width:300px; }
+        .letter-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:#fdfbfb; z-index:500; padding:20px; }
         .letter-screen.show { display:flex; }
-        .letter-container { max-width:600px; background:rgba(255,255,255,0.9); padding:2rem; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); text-align:center; }
+        .letter-container { max-width:600px; background:rgba(255,255,255,0.9); padding:2rem; border-radius:30px; text-align:center; }
         .letter-container h2 { font-family:'Dancing Script',cursive; font-size:2.5rem; color:#b0306e; margin-bottom:1rem; }
-        .letter-content { font-size:1.2rem; line-height:1.8; color:#2c3e50; font-weight:500; white-space:pre-line; }
-        .letter-return-btn { margin-top:20px; padding:12px 30px; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(255,105,180,0.4); transition:0.3s; border:2px solid white; display:inline-block; }
-        .secret-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#ffe6f0,#ffe0f0); z-index:550; padding:20px; }
+        .letter-content { font-size:1.2rem; line-height:1.8; color:#2c3e50; white-space:pre-line; }
+        .letter-return-btn { margin-top:20px; padding:12px 30px; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; border:2px solid white; display:inline-block; }
+        .secret-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:#ffe6f0; z-index:550; padding:20px; }
         .secret-screen.show { display:flex; }
-        .secret-container { max-width:600px; width:100%; background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); padding:2rem; border-radius:40px; box-shadow:0 20px 40px rgba(0,0,0,0.3); text-align:center; border:2px solid white; }
-        .secret-photo { width:100%; max-height:400px; object-fit:cover; border-radius:30px; box-shadow:0 15px 30px rgba(0,0,0,0.3); cursor:pointer; transition:transform 0.3s; border:3px solid white; animation:photoReveal 0.8s ease-out; }
-        .secret-photo:hover { transform:scale(1.02); }
-        @keyframes photoReveal { 0%{ opacity:0; transform:scale(0.8); } 100%{ opacity:1; transform:scale(1); } }
-        .soulmate-btn { margin-top:30px; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 5px 15px rgba(155,109,255,0.4); transition:0.3s; border:2px solid white; display:inline-block; }
+        .secret-container { max-width:600px; width:100%; background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); padding:2rem; border-radius:40px; text-align:center; border:2px solid white; }
+        .secret-photo { width:100%; max-height:400px; object-fit:cover; border-radius:30px; cursor:pointer; border:3px solid white; }
+        .soulmate-btn { margin-top:30px; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; font-size:1.2rem; cursor:pointer; border:2px solid white; display:inline-block; }
         .lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10001; justify-content:center; align-items:center; padding:20px; }
         .lightbox.show { display:flex; }
-        .lightbox img { max-width:90%; max-height:90%; border-radius:10px; border:3px solid white; box-shadow:0 0 50px rgba(255,255,255,0.3); }
-        .lightbox .close { position:absolute; top:20px; right:30px; font-size:40px; color:white; cursor:pointer; transition:0.3s; }
-        .auth-guard { text-align:center; padding:40px; }
+        .lightbox img { max-width:90%; max-height:90%; border-radius:10px; border:3px solid white; }
+        .lightbox .close { position:absolute; top:20px; right:30px; font-size:40px; color:white; cursor:pointer; }
     </style>
 </head>
 <body>
-<div id="root"></div>
+    <div id="root"></div>
 
-<script type="text/babel">
-    // ======================== YOUR CONFIGURATION ========================
-    const firebaseConfig = {
-        apiKey: "AIzaSyC18r8GPtooLmUBnOGRBQUIKOodPvHRX8o",
-        authDomain: "birthday-website-33f71.firebaseapp.com",
-        projectId: "birthday-website-33f71",
-        storageBucket: "birthday-website-33f71.firebasestorage.app",
-        messagingSenderId: "800374135757",
-        appId: "1:800374135757:web:2b4a058f708972e3e10284",
-        measurementId: "G-T3JH3J4N87"
-    };
-    const CLOUDINARY_CLOUD_NAME = "dpctt0wao";
-    const CLOUDINARY_UPLOAD_PRESET = "birthday_upload";
-    // ===================================================================
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    const { useState, useEffect, useRef } = React;
-    const { HashRouter, Routes, Route, useNavigate, useParams } = ReactRouterDOM;
-
-    // ✅ FIX: Safe URL parser — handles https:// correctly by splitting on first pipe |
-    // Dashboard-এ input format: url|date|caption (comma দিয়ে নয়, | দিয়ে আলাদা করা)
-    function parsePhotos(raw) {
-        return raw.split('\n').map(line => {
-            const parts = line.trim().split('|');
-            return {
-                url: (parts[0] || '').trim(),
-                date: (parts[1] || 'Memory').trim(),
-                caption: (parts[2] || '').trim()
-            };
-        }).filter(p => p.url);
-    }
-
-    function parseVideos(raw) {
-        return raw.split('\n').map(line => {
-            const parts = line.trim().split('|');
-            return {
-                url: (parts[0] || '').trim(),
-                title: (parts[1] || 'Video').trim()
-            };
-        }).filter(v => v.url);
-    }
-
-    function ContactFloatingButton({ wishData }) {
-        const [open, setOpen] = useState(false);
-        const photo = wishData?.contactPhoto || 'https://via.placeholder.com/50';
-        return (
-            <>
-                <div className="contact-float-btn" onClick={() => setOpen(!open)}>
-                    <img src={photo} alt="Contact" />
-                </div>
-                {open && (
-                    <div className="contact-modal">
-                        <p style={{fontWeight:'bold'}}>Contact the creator</p>
-                        {wishData?.facebook && <a href={wishData.facebook} target="_blank" rel="noreferrer"><i className="fab fa-facebook"></i> Facebook</a>}
-                        {wishData?.instagram && <a href={wishData.instagram} target="_blank" rel="noreferrer"><i className="fab fa-instagram"></i> Instagram</a>}
-                        <button onClick={() => setOpen(false)} className="logout-btn">Close</button>
-                    </div>
-                )}
-            </>
-        );
-    }
-
-    function LoginPage() {
-        const navigate = useNavigate();
-        // ✅ FIX: Already logged in হলে সরাসরি dashboard-এ যাবে
-        useEffect(() => {
-            const unsub = auth.onAuthStateChanged(user => {
-                if (user) navigate('/dashboard');
-            });
-            return () => unsub();
-        }, []);
-
-        const login = async () => {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            try {
-                await auth.signInWithPopup(provider);
-                navigate('/dashboard');
-            } catch (e) {
-                alert('Login failed: ' + e.message);
-            }
+    <script type="text/babel">
+        // ==================== CONFIG ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC18r8GPtooLmUBnOGRBQUIKOodPvHRX8o",
+            authDomain: "birthday-website-33f71.firebaseapp.com",
+            projectId: "birthday-website-33f71",
+            storageBucket: "birthday-website-33f71.firebasestorage.app",
+            messagingSenderId: "800374135757",
+            appId: "1:800374135757:web:2b4a058f708972e3e10284",
+            measurementId: "G-T3JH3J4N87"
         };
-        return (
-            <div>
-                <video className="video-bg" autoPlay muted loop playsInline>
-                    <source src="https://assets.mixkit.co/videos/preview/mixkit-candles-in-the-dark-1327-large.mp4" type="video/mp4" />
-                </video>
-                <div className="overlay"></div>
-                <div className="login-container">
-                    <h1 style={{color:'white', marginBottom:'20px'}}>Create Your Own Birthday Wish Page</h1>
-                    <button className="login-btn" onClick={login}>
-                        <i className="fab fa-google"></i> Login with Google
-                    </button>
-                </div>
-            </div>
-        );
-    }
+        const CLOUDINARY_CLOUD_NAME = "dpctt0wao";
+        const CLOUDINARY_UPLOAD_PRESET = "birthday_upload";
+        // =================================================
 
-    // ✅ FIX: Dashboard-এ auth guard — login না করলে redirect
-    function Dashboard() {
-        const navigate = useNavigate();
-        const [authChecked, setAuthChecked] = useState(false);
-        const [user, setUser] = useState(null);
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        useEffect(() => {
-            const unsub = auth.onAuthStateChanged(u => {
-                if (!u) navigate('/');
-                else { setUser(u); setAuthChecked(true); }
-            });
-            return () => unsub();
-        }, []);
+        const { useState, useEffect, useRef } = React;
+        const { HashRouter, Routes, Route, useNavigate, useParams } = ReactRouterDOM;
 
-        const [form, setForm] = useState({
-            birthdayName: 'Natu..',
-            month: 2, day: 15, hour: 0, minute: 0,
-            age: 17,
-            greetingText: "Hey You Know What! You're the most adorable human i ever met! 💖",
-            reasons: [
-                { text: "You're such a kind and wonderful person...", emoji: "🌟" },
-                { text: "May your day be filled with love...", emoji: "💗" },
-                { text: "Wishing you success...", emoji: "💕" },
-                { text: "Stay the amazing girl you are...", emoji: "🌟" }
-            ],
-            photos: [
-                { url: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773499479/whatistime_web_1024_qjits5.jpg", date: "What is time", caption: "This day marks..." },
-                { url: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773476394/1763024498529_wgoq2u.jpg", date: "Her Smile", caption: "You're truly..." },
-            ],
-            videos: [
-                { title: "Happy Birthday Sweety❤️🎂", url: "https://res.cloudinary.com/dpctt0wao/video/upload/v1773477829/WhatsApp_Video_2026-03-14_at_2.41.14_PM_n2zc1z.mp4" },
-                { title: "When she sings...", url: "https://res.cloudinary.com/dpctt0wao/video/upload/v1773477827/WhatsApp_Video_2026-03-14_at_2.41.15_PM_hcyu15.mp4" }
-            ],
-            countdownAudio: "https://res.cloudinary.com/dpctt0wao/video/upload/v1773211012/WhatsApp_Audio_2026-03-11_at_12.33.50_PM_jhzjmt.mp3",
-            wishAudio: "https://res.cloudinary.com/dpctt0wao/video/upload/v1773210114/WhatsApp_Audio_2026-03-10_at_11.46.39_PM_cbggem.mp3",
-            letter: "Every laugh, every chat...",
-            secretPhoto: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg",
-            facebook: "https://www.facebook.com/rafahimn",
-            instagram: "https://www.instagram.com/rafahimn",
-            contactPhoto: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg"
-        });
-        const [saving, setSaving] = useState(false);
+        // Floating Hearts - vanilla JS (NO React hooks outside components)
+        function startFloatingHearts() {
+            setInterval(() => {
+                const container = document.querySelector('.floating-hearts');
+                if (!container) return;
+                const heart = document.createElement('div');
+                heart.className = 'heart-float';
+                heart.textContent = ['💖','💝','💗','💓','💕'][Math.floor(Math.random()*5)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.setProperty('--float-duration', (Math.random() * 4 + 4) + 's');
+                heart.style.setProperty('--delay', Math.random() * 3 + 's');
+                heart.style.setProperty('--translate-x', (Math.random() * 60 - 30) + 'px');
+                container.appendChild(heart);
+                setTimeout(() => heart.remove(), 8000);
+            }, 800);
+        }
 
-        const handleChange = (e) => {
-            const { name, value } = e.target;
-            setForm(prev => ({ ...prev, [name]: value }));
-        };
-
-        const uploadWidget = (callback) => {
-            window.cloudinary.openUploadWidget(
-                { cloudName: CLOUDINARY_CLOUD_NAME, uploadPreset: CLOUDINARY_UPLOAD_PRESET, sources: ['local', 'url'], multiple: false },
-                (error, result) => {
-                    if (!error && result && result.event === "success") callback(result.info.secure_url);
-                }
-            );
-        };
-
-        const handleSubmit = async () => {
-            if (!auth.currentUser) { alert('Please login first'); return; }
-            // ✅ FIX: age validation
-            if (!form.age || form.age < 1) { alert('Age must be at least 1'); return; }
-            setSaving(true);
-            try {
-                const wishId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-                await db.collection('wishes').doc(wishId).set({
-                    ...form,
-                    userId: auth.currentUser.uid,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                navigate(`/wish/${wishId}`);
-            } catch (err) {
-                alert('Error saving: ' + err.message);
-            } finally {
-                setSaving(false);
-            }
-        };
-
-        const logout = () => { auth.signOut(); navigate('/'); };
-
-        if (!authChecked) return <div style={{textAlign:'center', marginTop:'100px'}}>Loading...</div>;
-
-        return (
-            <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom:'20px' }}>
-                    <h1>Customize Your Birthday Wish Page</h1>
-                    <button className="logout-btn" onClick={logout}>Logout</button>
-                </div>
-                <div className="form-container">
-                    <div className="form-group"><label>Birthday Person's Name</label><input name="birthdayName" value={form.birthdayName} onChange={handleChange} /></div>
-                    <div className="form-group">
-                        <label>Birth Date & Time</label>
-                        <input type="date" onChange={e => { const d = new Date(e.target.value); setForm(prev => ({...prev, month: d.getMonth(), day: d.getDate()})); }} />
-                        <input type="time" onChange={e => { const [h,m] = e.target.value.split(':'); setForm(prev => ({...prev, hour: parseInt(h)||0, minute: parseInt(m)||0})); }} style={{marginTop:'8px'}} />
-                    </div>
-                    <div className="form-group"><label>Age (Candles count)</label><input type="number" min="1" max="100" name="age" value={form.age} onChange={e => setForm(prev => ({...prev, age: Math.max(1, parseInt(e.target.value)||1)}))} /></div>
-                    <div className="form-group"><label>Greeting Message</label><textarea name="greetingText" value={form.greetingText} onChange={handleChange} /></div>
-                    <div className="form-group">
-                        <label>Reasons (এক লাইনে এক reason — emoji text)</label>
-                        <small style={{display:'block', marginBottom:'5px', color:'#888'}}>যেমন: 🌟 You're so kind and wonderful</small>
-                        <textarea rows="6" onChange={e => {
-                            const lines = e.target.value.split('\n').filter(l => l.trim());
-                            const newReasons = lines.slice(0, 4).map(line => {
-                                const trimmed = line.trim();
-                                // emoji detect: first character
-                                const emojiMatch = trimmed.match(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})/u);
-                                const emoji = emojiMatch ? emojiMatch[0] : '💖';
-                                const text = emojiMatch ? trimmed.slice(emoji.length).trim() : trimmed;
-                                return { emoji, text };
-                            });
-                            setForm(prev => ({...prev, reasons: newReasons}));
-                        }} defaultValue={form.reasons.map(r => r.emoji + ' ' + r.text).join('\n')} />
-                    </div>
-                    <div className="form-group">
-                        {/* ✅ FIX: | দিয়ে আলাদা করা — https:// এর : দিয়ে conflict নেই */}
-                        <label>Photos (এক লাইনে এক photo — url|date|caption)</label>
-                        <small style={{display:'block', marginBottom:'5px', color:'#888'}}>যেমন: https://example.com/img.jpg|Her Smile|A beautiful memory</small>
-                        <textarea rows="5" onChange={e => setForm(prev => ({...prev, photos: parsePhotos(e.target.value)}))}
-                            defaultValue={form.photos.map(p => `${p.url}|${p.date}|${p.caption}`).join('\n')} />
-                        <button type="button" style={{marginTop:'8px', padding:'6px 14px', borderRadius:'12px', border:'1px solid #ddd', cursor:'pointer'}}
-                            onClick={() => uploadWidget(url => setForm(prev => ({...prev, photos: [...prev.photos, { url, date: 'New Memory', caption: 'Caption here' }]})))}>
-                            📷 Upload Photo
-                        </button>
-                    </div>
-                    <div className="form-group">
-                        {/* ✅ FIX: | দিয়ে আলাদা করা */}
-                        <label>Videos (এক লাইনে এক video — url|title)</label>
-                        <small style={{display:'block', marginBottom:'5px', color:'#888'}}>যেমন: https://example.com/vid.mp4|Happy Birthday!</small>
-                        <textarea rows="4" onChange={e => setForm(prev => ({...prev, videos: parseVideos(e.target.value)}))}
-                            defaultValue={form.videos.map(v => `${v.url}|${v.title}`).join('\n')} />
-                    </div>
-                    <div className="form-group"><label>Countdown Audio URL</label><input name="countdownAudio" value={form.countdownAudio} onChange={handleChange} /></div>
-                    <div className="form-group"><label>Birthday Wish Audio URL</label><input name="wishAudio" value={form.wishAudio} onChange={handleChange} /></div>
-                    <div className="form-group"><label>Love Letter</label><textarea name="letter" value={form.letter} onChange={handleChange} style={{height:'120px'}} /></div>
-                    <div className="form-group">
-                        <label>Secret Photo URL</label>
-                        <input name="secretPhoto" value={form.secretPhoto} onChange={handleChange} />
-                        <button type="button" style={{marginTop:'8px', padding:'6px 14px', borderRadius:'12px', border:'1px solid #ddd', cursor:'pointer'}}
-                            onClick={() => uploadWidget(url => setForm(prev => ({...prev, secretPhoto: url})))}>📷 Upload</button>
-                    </div>
-                    <div className="form-group"><label>Facebook Profile URL</label><input name="facebook" value={form.facebook} onChange={handleChange} /></div>
-                    <div className="form-group"><label>Instagram Profile URL</label><input name="instagram" value={form.instagram} onChange={handleChange} /></div>
-                    <div className="form-group">
-                        <label>Contact Icon Photo URL</label>
-                        <input name="contactPhoto" value={form.contactPhoto} onChange={handleChange} />
-                        <button type="button" style={{marginTop:'8px', padding:'6px 14px', borderRadius:'12px', border:'1px solid #ddd', cursor:'pointer'}}
-                            onClick={() => uploadWidget(url => setForm(prev => ({...prev, contactPhoto: url})))}>📷 Upload</button>
-                    </div>
-                    <button className="submit-btn" onClick={handleSubmit} disabled={saving}>{saving ? 'Creating...' : '🎉 Create My Wish Page'}</button>
-                </div>
-            </div>
-        );
-    }
-
-    function WishPage() {
-        const { wishId } = useParams();
-        const [wishData, setWishData] = useState(null);
-        const [loading, setLoading] = useState(true);
-        const [currentStep, setCurrentStep] = useState('countdown');
-        // ✅ FIX: audio ref গুলো একটাই রাখা হয়েছে, step change-এ আগের audio বন্ধ হবে
-        const audioRef = useRef(null);
-        const audioPlayedRef = useRef({ countdown: false, greeting: false });
-
-        useEffect(() => {
-            db.collection('wishes').doc(wishId).get().then(doc => {
-                if (doc.exists) setWishData(doc.data());
-                else alert('Invalid wish page');
-            }).catch(() => alert('Error loading')).finally(() => setLoading(false));
-        }, [wishId]);
-
-        // Floating elements
-        useEffect(() => {
-            const interval = setInterval(() => {
+        // Floating elements (butterflies & flowers)
+        function startFloatingElements() {
+            setInterval(() => {
                 const container = document.querySelector('.floating-elements');
                 if (!container) return;
-                const els = ['🦋','🌸','🌼','🌺'];
                 const el = document.createElement('div');
                 el.className = 'float-item ' + (Math.random() > 0.5 ? 'butterfly' : 'flower');
-                el.textContent = els[Math.floor(Math.random() * els.length)];
+                el.textContent = ['🦋','🌸','🌼','🌺'][Math.floor(Math.random()*4)];
                 el.style.left = Math.random() * 100 + '%';
                 el.style.animationDelay = Math.random() * 5 + 's';
                 el.style.fontSize = (Math.random() * 1.5 + 1.5) + 'rem';
                 container.appendChild(el);
                 setTimeout(() => el.remove(), 15000);
             }, 2000);
-            return () => clearInterval(interval);
-        }, []);
+        }
 
-        // Birthday check
-        useEffect(() => {
-            if (!wishData) return;
-            const check = () => {
-                const now = new Date();
-                const birthday = new Date(now.getFullYear(), wishData.month, wishData.day, wishData.hour, wishData.minute);
-                if (now >= birthday) setCurrentStep(prev => prev === 'countdown' ? 'greeting' : prev);
-            };
-            check();
-            const timer = setInterval(check, 1000);
-            return () => clearInterval(timer);
-        }, [wishData]);
+        function ContactFloatingButton({ wishData }) {
+            const [open, setOpen] = useState(false);
+            const photo = wishData?.contactPhoto || 'https://via.placeholder.com/50';
+            return (
+                <>
+                    <div className="contact-float-btn" onClick={() => setOpen(!open)}>
+                        <img src={photo} alt="Contact" />
+                    </div>
+                    {open && (
+                        <div className="contact-modal">
+                            <p style={{fontWeight:'bold'}}>Contact the creator</p>
+                            {wishData?.facebook && <a href={wishData.facebook} target="_blank" rel="noreferrer"><i className="fab fa-facebook"></i> Facebook</a>}
+                            {wishData?.instagram && <a href={wishData.instagram} target="_blank" rel="noreferrer"><i className="fab fa-instagram"></i> Instagram</a>}
+                            <button onClick={() => setOpen(false)} className="logout-btn">Close</button>
+                        </div>
+                    )}
+                </>
+            );
+        }
 
-        // ✅ FIX: Audio — step পরিবর্তনে আগের audio বন্ধ হয়, একবারই play হয়
-        useEffect(() => {
-            if (!wishData) return;
-
-            // আগের audio বন্ধ করো
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current.currentTime = 0;
-                audioRef.current = null;
-            }
-
-            if (currentStep === 'countdown' && wishData.countdownAudio && !audioPlayedRef.current.countdown) {
-                audioPlayedRef.current.countdown = true;
-                const a = new Audio(wishData.countdownAudio);
-                a.loop = true;
-                a.play().catch(() => {});
-                audioRef.current = a;
-            }
-
-            if (currentStep === 'greeting' && wishData.wishAudio && !audioPlayedRef.current.greeting) {
-                audioPlayedRef.current.greeting = true;
-                const a = new Audio(wishData.wishAudio);
-                a.loop = true;
-                a.play().catch(() => {});
-                audioRef.current = a;
-            }
-
-            return () => {
-                if (audioRef.current) {
-                    audioRef.current.pause();
-                    audioRef.current = null;
+        function LoginPage() {
+            const navigate = useNavigate();
+            const login = async () => {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                try {
+                    await auth.signInWithPopup(provider);
+                    navigate('/dashboard');
+                } catch (e) {
+                    alert('Login failed: ' + e.message);
                 }
             };
-        }, [currentStep, wishData]);
-
-        if (loading) return <div style={{textAlign:'center', marginTop:'100px', fontSize:'1.5rem'}}>Loading... 💫</div>;
-        if (!wishData) return <div style={{textAlign:'center', marginTop:'100px'}}>Invalid wish page ❌</div>;
-
-        const openLightbox = (src) => {
-            const lb = document.getElementById('lightbox');
-            const img = document.getElementById('lightboxImg');
-            if (lb && img && src) { img.src = src; lb.classList.add('show'); }
-        };
-        const closeLightbox = () => {
-            const lb = document.getElementById('lightbox');
-            if (lb) lb.classList.remove('show');
-        };
-
-        return (
-            <div>
-                <ContactFloatingButton wishData={wishData} />
-                <div className="floating-elements"></div>
-                <div className="magic-sparkles"></div>
-                <div className="floating-hearts" id="floatingHearts"></div>
-                {/* ✅ FIX: lightbox img-এ alt text দেওয়া হয়েছে */}
-                <div id="lightbox" className="lightbox" onClick={closeLightbox}>
-                    <span className="close" role="button" aria-label="Close">&times;</span>
-                    <img id="lightboxImg" src="" alt="Full size view" />
-                </div>
-
-                {currentStep === 'countdown' && <CountdownContent wishData={wishData} />}
-                {currentStep === 'greeting' && (
-                    <div className="greeting-screen show">
-                        <h1>Happy Birthday {wishData.birthdayName} ❤️🎂💫</h1>
-                        <div className="greeting-text">{wishData.greetingText}</div>
-                        <button className="enter-btn" onClick={() => setCurrentStep('cake')}>Click to enter your world 💕</button>
+            return (
+                <div>
+                    <video className="video-bg" autoPlay muted loop playsInline>
+                        <source src="https://assets.mixkit.co/videos/preview/mixkit-candles-in-the-dark-1327-large.mp4" type="video/mp4" />
+                    </video>
+                    <div className="overlay"></div>
+                    <div className="login-container">
+                        <h1 style={{color:'white', marginBottom:'20px'}}>Create Your Own Birthday Wish Page</h1>
+                        <button className="login-btn" onClick={login}>
+                            <i className="fab fa-google"></i> Login with Google
+                        </button>
                     </div>
-                )}
-                {currentStep === 'cake' && <CakeScreen wishData={wishData} onNext={() => setCurrentStep('reasons')} />}
-                {currentStep === 'reasons' && <ReasonsScreen wishData={wishData} onNext={() => setCurrentStep('photo')} />}
-                {currentStep === 'photo' && <PhotoScreen wishData={wishData} openLightbox={openLightbox} onNext={() => setCurrentStep('video')} />}
-                {currentStep === 'video' && <VideoScreen wishData={wishData} onNext={() => setCurrentStep('letter')} />}
-                {currentStep === 'letter' && <LetterScreen wishData={wishData} onNext={() => setCurrentStep('secret')} />}
-                {currentStep === 'secret' && <SecretScreen wishData={wishData} openLightbox={openLightbox} />}
-            </div>
-        );
-    }
+                </div>
+            );
+        }
 
-    function CountdownContent({ wishData }) {
-        const [time, setTime] = useState({ days:0, hours:0, mins:0, secs:0 });
-        useEffect(() => {
-            const update = () => {
-                const now = new Date();
-                const birthday = new Date(now.getFullYear(), wishData.month, wishData.day, wishData.hour, wishData.minute);
-                if (now >= birthday) return;
-                const diff = birthday - now;
-                setTime({
-                    days: Math.floor(diff / (1000*60*60*24)),
-                    hours: Math.floor((diff / (1000*60*60)) % 24),
-                    mins: Math.floor((diff / (1000*60)) % 60),
-                    secs: Math.floor((diff / 1000) % 60)
+        function Dashboard() {
+            const navigate = useNavigate();
+            const [form, setForm] = useState({
+                birthdayName: 'Natu..',
+                month: 2, day: 15, hour: 0, minute: 0,
+                age: 17,
+                greetingText: "Hey You Know What! You're the most adorable human i ever met! 💖",
+                reasons: [
+                    { text: "You're such a kind and wonderful person...", emoji: "🌟" },
+                    { text: "May your day be filled with love...", emoji: "💗" },
+                    { text: "Wishing you success...", emoji: "💕" },
+                    { text: "Stay the amazing girl you are...", emoji: "🌟" }
+                ],
+                photos: [
+                    { url: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773499479/whatistime_web_1024_qjits5.jpg", date: "What is time", caption: "This day marks..." },
+                    { url: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773476394/1763024498529_wgoq2u.jpg", date: "Her Smile", caption: "You're truly..." }
+                ],
+                videos: [
+                    { title: "Happy Birthday Sweety❤️🎂", url: "https://res.cloudinary.com/dpctt0wao/video/upload/v1773477829/WhatsApp_Video_2026-03-14_at_2.41.14_PM_n2zc1z.mp4" },
+                    { title: "When she sings...", url: "https://res.cloudinary.com/dpctt0wao/video/upload/v1773477827/WhatsApp_Video_2026-03-14_at_2.41.15_PM_hcyu15.mp4" }
+                ],
+                countdownAudio: "https://res.cloudinary.com/dpctt0wao/video/upload/v1773211012/WhatsApp_Audio_2026-03-11_at_12.33.50_PM_jhzjmt.mp3",
+                wishAudio: "https://res.cloudinary.com/dpctt0wao/video/upload/v1773210114/WhatsApp_Audio_2026-03-10_at_11.46.39_PM_cbggem.mp3",
+                letter: "Every laugh, every chat...",
+                secretPhoto: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg",
+                facebook: "https://www.facebook.com/rafahimn",
+                instagram: "https://www.instagram.com/rafahimn",
+                contactPhoto: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg"
+            });
+            const [saving, setSaving] = useState(false);
+
+            const handleChange = (e) => {
+                const { name, value } = e.target;
+                setForm(prev => ({ ...prev, [name]: value }));
+            };
+
+            const uploadWidget = (callback) => {
+                window.cloudinary.openUploadWidget({
+                    cloudName: CLOUDINARY_CLOUD_NAME,
+                    uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+                    sources: ['local', 'url'],
+                    multiple: false,
+                }, (error, result) => {
+                    if (!error && result && result.event === "success") {
+                        callback(result.info.secure_url);
+                    }
                 });
             };
-            update();
-            const interval = setInterval(update, 1000);
-            return () => clearInterval(interval);
-        }, [wishData]);
 
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        return (
-            <div className="countdown-screen" style={{display:'flex'}}>
-                <h1 className="countdown-title">Wait for countdown Please...⌛</h1>
-                <div className="countdown-box">
-                    <div className="count-item"><span className="count-number">{String(time.days).padStart(2,'0')}</span><span className="count-label">Days</span></div>
-                    <div className="count-item"><span className="count-number">{String(time.hours).padStart(2,'0')}</span><span className="count-label">Hours</span></div>
-                    <div className="count-item"><span className="count-number">{String(time.mins).padStart(2,'0')}</span><span className="count-label">Mins</span></div>
-                    <div className="count-item"><span className="count-number">{String(time.secs).padStart(2,'0')}</span><span className="count-label">Secs</span></div>
+            const handleSubmit = async () => {
+                if (!auth.currentUser) { alert('Please login first'); return; }
+                setSaving(true);
+                try {
+                    const wishId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+                    await db.collection('wishes').doc(wishId).set({
+                        ...form,
+                        userId: auth.currentUser.uid,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    navigate(`/wish/${wishId}`);
+                } catch (err) {
+                    alert('Error saving: ' + err.message);
+                } finally {
+                    setSaving(false);
+                }
+            };
+
+            return (
+                <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h1>Customize Your Birthday Wish Page</h1>
+                        <button className="logout-btn" onClick={() => { auth.signOut(); navigate('/'); }}>Logout</button>
+                    </div>
+                    <div className="form-container">
+                        <div className="form-group"><label>Birthday Person's Name</label><input name="birthdayName" value={form.birthdayName} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Birth Date</label><input type="date" onChange={e => { const d = new Date(e.target.value); setForm(prev => ({...prev, month: d.getMonth(), day: d.getDate()})); }} /><input type="time" onChange={e => { const [h,m] = e.target.value.split(':'); setForm(prev => ({...prev, hour: parseInt(h), minute: parseInt(m)})); }} /></div>
+                        <div className="form-group"><label>Age (Candles)</label><input type="number" name="age" value={form.age} onChange={e => setForm(prev => ({...prev, age: parseInt(e.target.value)}))} /></div>
+                        <div className="form-group"><label>Greeting Message</label><textarea name="greetingText" value={form.greetingText} onChange={handleChange} /></div>
+                        <div className="form-group"><label>4 Reasons (emoji text per line)</label><textarea onChange={e => { const lines = e.target.value.split('\n').filter(l=>l.trim()); const newReasons = lines.map(line => { const parts = line.trim().split(' '); return { emoji: parts[0] || '💖', text: parts.slice(1).join(' ') || line }; }); if (newReasons.length <= 4) setForm(prev => ({...prev, reasons: newReasons})); }} defaultValue={form.reasons.map(r => r.emoji + ' ' + r.text).join('\n')} /></div>
+                        <div className="form-group"><label>Photos (url:date:caption, comma separated)</label><textarea onChange={e => { const items = e.target.value.split(',').map(item => { const parts = item.split(':'); return { url: parts[0]?.trim(), date: parts[1]?.trim(), caption: parts[2]?.trim() }; }); setForm(prev => ({...prev, photos: items})); }} defaultValue={form.photos.map(p => `${p.url}:${p.date}:${p.caption}`).join(',')} /><button onClick={() => uploadWidget(url => setForm(prev => ({...prev, photos: [...prev.photos, { url, date: 'New Memory', caption: 'Caption' }] })))}>Upload Photo</button></div>
+                        <div className="form-group"><label>Videos (url:title, comma separated)</label><textarea onChange={e => { const items = e.target.value.split(',').map(item => { const [url, title] = item.split(':'); return { url: url?.trim(), title: title?.trim() || 'Video' }; }); setForm(prev => ({...prev, videos: items})); }} defaultValue={form.videos.map(v => `${v.url}:${v.title}`).join(',')} /></div>
+                        <div className="form-group"><label>Countdown Audio URL</label><input name="countdownAudio" value={form.countdownAudio} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Birthday Wish Audio URL</label><input name="wishAudio" value={form.wishAudio} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Love Letter</label><textarea name="letter" value={form.letter} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Secret Photo URL</label><input name="secretPhoto" value={form.secretPhoto} onChange={handleChange} /><button onClick={() => uploadWidget(url => setForm(prev => ({...prev, secretPhoto: url})))}>Upload</button></div>
+                        <div className="form-group"><label>Facebook Profile</label><input name="facebook" value={form.facebook} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Instagram Profile</label><input name="instagram" value={form.instagram} onChange={handleChange} /></div>
+                        <div className="form-group"><label>Contact Icon Photo URL</label><input name="contactPhoto" value={form.contactPhoto} onChange={handleChange} /><button onClick={() => uploadWidget(url => setForm(prev => ({...prev, contactPhoto: url})))}>Upload</button></div>
+                        <button className="submit-btn" onClick={handleSubmit} disabled={saving}>{saving ? 'Creating...' : 'Create My Wish Page'}</button>
+                    </div>
                 </div>
-                <div className="countdown-message">⏰ Time-lap at {wishData.day} {months[wishData.month]} {String(wishData.hour).padStart(2,'0')}:{String(wishData.minute).padStart(2,'0')}</div>
-            </div>
-        );
-    }
+            );
+        }
 
-    function CakeScreen({ wishData, onNext }) {
-        const [cut, setCut] = useState(false);
-        const [blown, setBlown] = useState(0);
-        // ✅ FIX: age validation — minimum 1, maximum 100
-        const total = Math.min(Math.max(parseInt(wishData.age) || 1, 1), 100);
+        function WishPage() {
+            const { wishId } = useParams();
+            const [wishData, setWishData] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [currentStep, setCurrentStep] = useState('countdown');
+            const countdownAudioRef = useRef(null);
+            const wishAudioRef = useRef(null);
 
-        useEffect(() => {
-            let interval;
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const analyser = audioCtx.createAnalyser();
-                const source = audioCtx.createMediaStreamSource(stream);
-                source.connect(analyser);
-                analyser.fftSize = 256;
-                const dataArray = new Uint8Array(analyser.frequencyBinCount);
-                interval = setInterval(() => {
-                    if (cut || blown >= total) return;
-                    analyser.getByteFrequencyData(dataArray);
-                    const avg = dataArray.reduce((a,b) => a+b, 0) / dataArray.length;
-                    if (avg > 50) {
-                        setBlown(prev => {
-                            const newB = Math.min(prev + 2, total);
-                            if (newB === total) confetti({ particleCount:100, spread:70 });
-                            return newB;
-                        });
-                    }
-                }, 150);
-            }).catch(() => {/* mic permission denied — only tap works */});
-            return () => { if (interval) clearInterval(interval); };
-        }, [cut, total]);
+            useEffect(() => {
+                startFloatingHearts();
+                startFloatingElements();
+            }, []);
 
-        const blowCandle = (i) => {
-            if (!cut && i >= blown) {
-                setBlown(i + 1);
-                confetti({ particleCount:5, spread:30 });
-            }
-        };
+            useEffect(() => {
+                db.collection('wishes').doc(wishId).get()
+                    .then(doc => {
+                        if (doc.exists) setWishData(doc.data());
+                        else alert('Invalid wish page');
+                    })
+                    .catch(() => alert('Error loading'))
+                    .finally(() => setLoading(false));
+            }, [wishId]);
 
-        return (
-            <div className="cake-screen show">
-                <div className="cake-container">
-                    <div className="cake-emoji">{cut ? '🍰' : '🎂'}</div>
-                    <div className="candles">
-                        {Array.from({length: total}).map((_, i) => (
-                            <span key={i} className={`candle ${i < blown ? 'blown' : ''}`} onClick={() => blowCandle(i)} role="button" aria-label={`Candle ${i+1}`}>🕯️</span>
-                        ))}
+            useEffect(() => {
+                if (!wishData) return;
+                const timer = setInterval(() => {
+                    const now = new Date();
+                    const birthday = new Date(now.getFullYear(), wishData.month, wishData.day, wishData.hour, wishData.minute);
+                    if (now >= birthday) { setCurrentStep('greeting'); clearInterval(timer); }
+                }, 1000);
+                return () => clearInterval(timer);
+            }, [wishData]);
+
+            useEffect(() => {
+                if (currentStep === 'countdown' && wishData?.countdownAudio) {
+                    if (countdownAudioRef.current) { countdownAudioRef.current.pause(); }
+                    countdownAudioRef.current = new Audio(wishData.countdownAudio);
+                    countdownAudioRef.current.play().catch(() => {});
+                }
+                if (currentStep === 'greeting' && wishData?.wishAudio) {
+                    if (wishAudioRef.current) { wishAudioRef.current.pause(); }
+                    wishAudioRef.current = new Audio(wishData.wishAudio);
+                    wishAudioRef.current.play().catch(() => {});
+                }
+            }, [currentStep, wishData]);
+
+            if (loading) return <div style={{textAlign:'center', marginTop:'100px', fontSize:'24px'}}>Loading your wish page...</div>;
+            if (!wishData) return <div style={{textAlign:'center', marginTop:'100px', fontSize:'24px'}}>Page not found 😢</div>;
+
+            const openLightbox = (src) => {
+                const lb = document.getElementById('lightbox');
+                const img = document.getElementById('lightboxImg');
+                if (lb && img) { img.src = src; lb.classList.add('show'); }
+            };
+            const closeLightbox = () => {
+                const lb = document.getElementById('lightbox');
+                if (lb) lb.classList.remove('show');
+            };
+
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+            return (
+                <div>
+                    <ContactFloatingButton wishData={wishData} />
+                    <div className="floating-elements"></div>
+                    <div className="magic-sparkles"></div>
+                    <div className="floating-hearts"></div>
+                    <div id="lightbox" className="lightbox" onClick={closeLightbox}>
+                        <span className="close">&times;</span>
+                        <img id="lightboxImg" src="" alt="lightbox" />
                     </div>
-                    <div className="cake-status">
-                        {cut ? '🎉 Cake cut! Happy Birthday! 🎉' : `${total - blown} candles burning — Blow or tap to extinguish`}
-                    </div>
-                    {!cut && (
-                        <button className="cut-btn" disabled={blown !== total} onClick={() => { setCut(true); confetti({ particleCount:150, spread:80 }); }}>
-                            🍰 Cut Cake
-                        </button>
+
+                    {currentStep === 'countdown' && (
+                        <CountdownContent wishData={wishData} months={months} />
                     )}
-                    {cut && <button className="cake-next-btn" onClick={onNext}>Enter your storyline 💫</button>}
+                    {currentStep === 'greeting' && (
+                        <div className="greeting-screen show">
+                            <h1>Happy Birthday {wishData.birthdayName} ❤️🎂💫</h1>
+                            <div className="greeting-text">{wishData.greetingText}</div>
+                            <button className="enter-btn" onClick={() => setCurrentStep('cake')}>Click to enter your world 💕</button>
+                        </div>
+                    )}
+                    {currentStep === 'cake' && <CakeScreen wishData={wishData} onNext={() => setCurrentStep('reasons')} />}
+                    {currentStep === 'reasons' && <ReasonsScreen wishData={wishData} onNext={() => setCurrentStep('photo')} />}
+                    {currentStep === 'photo' && <PhotoScreen wishData={wishData} openLightbox={openLightbox} onNext={() => setCurrentStep('video')} />}
+                    {currentStep === 'video' && <VideoScreen wishData={wishData} onNext={() => setCurrentStep('letter')} />}
+                    {currentStep === 'letter' && <LetterScreen wishData={wishData} onNext={() => setCurrentStep('secret')} />}
+                    {currentStep === 'secret' && <SecretScreen wishData={wishData} openLightbox={openLightbox} />}
                 </div>
-            </div>
-        );
-    }
+            );
+        }
 
-    // ✅ FIX: useEffect সবসময় top-level-এ, conditional নয়
-    function ReasonsScreen({ wishData, onNext }) {
-        const [index, setIndex] = useState(0);
-        const reasons = wishData.reasons || [];
+        function CountdownContent({ wishData, months }) {
+            const [time, setTime] = useState({ days:0, hours:0, mins:0, secs:0 });
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    const now = new Date();
+                    const birthday = new Date(now.getFullYear(), wishData.month, wishData.day, wishData.hour, wishData.minute);
+                    if (now >= birthday) return;
+                    const diff = birthday - now;
+                    setTime({
+                        days: Math.floor(diff / (1000*60*60*24)),
+                        hours: Math.floor((diff / (1000*60*60)) % 24),
+                        mins: Math.floor((diff / (1000*60)) % 60),
+                        secs: Math.floor((diff / 1000) % 60)
+                    });
+                }, 1000);
+                return () => clearInterval(interval);
+            }, [wishData]);
+            return (
+                <div className="countdown-screen" style={{display:'flex'}}>
+                    <h1 className="countdown-title">Wait for countdown Please...⌛</h1>
+                    <div className="countdown-box">
+                        <div className="count-item"><span className="count-number">{String(time.days).padStart(2,'0')}</span><span className="count-label">Days</span></div>
+                        <div className="count-item"><span className="count-number">{String(time.hours).padStart(2,'0')}</span><span className="count-label">Hours</span></div>
+                        <div className="count-item"><span className="count-number">{String(time.mins).padStart(2,'0')}</span><span className="count-label">Mins</span></div>
+                        <div className="count-item"><span className="count-number">{String(time.secs).padStart(2,'0')}</span><span className="count-label">Secs</span></div>
+                    </div>
+                    <div className="countdown-message">⏰ Time-lap at {wishData.day} {months[wishData.month]} {wishData.hour}:{String(wishData.minute).padStart(2,'0')}</div>
+                </div>
+            );
+        }
 
-        // ✅ FIXED: hook conditional call সরানো হয়েছে
-        useEffect(() => {
-            if (reasons.length === 0) {
-                const t = setTimeout(onNext, 100);
-                return () => clearTimeout(t);
-            }
-        }, []);
-
-        if (reasons.length === 0) return null;
-
-        const handleClick = () => index < reasons.length - 1 ? setIndex(index + 1) : onNext();
-        const r = reasons[index];
-        return (
-            <div className="reasons-screen show">
-                <div className="reasons-header"><h1>Happy Birthday {wishData.birthdayName}.. 💖</h1></div>
-                <div className="reasons-container">
-                    <div className="reason-card">
-                        <div className="reason-text">{r.emoji} {r.text}</div>
-                        <div className="reason-emoji">{r.emoji}</div>
+        function CakeScreen({ wishData, onNext }) {
+            const [cut, setCut] = useState(false);
+            const [blown, setBlown] = useState(0);
+            const total = wishData.age || 17;
+            useEffect(() => {
+                let interval;
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const analyser = audioCtx.createAnalyser();
+                    const source = audioCtx.createMediaStreamSource(stream);
+                    source.connect(analyser);
+                    analyser.fftSize = 256;
+                    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    interval = setInterval(() => {
+                        if (cut || blown >= total) { clearInterval(interval); return; }
+                        analyser.getByteFrequencyData(dataArray);
+                        if (dataArray.reduce((a,b)=>a+b,0)/dataArray.length > 50) {
+                            setBlown(prev => { const newB = Math.min(prev+2, total); if (newB === total && window.confetti) confetti({ particleCount:100, spread:70 }); return newB; });
+                        }
+                    }, 150);
+                }).catch(() => {});
+                return () => { if (interval) clearInterval(interval); };
+            }, [cut, total]);
+            return (
+                <div className="cake-screen show">
+                    <div className="cake-container">
+                        <div className="cake-emoji">{cut ? '🍰' : '🎂'}</div>
+                        <div className="candles">
+                            {Array.from({length: total}).map((_, i) => (
+                                <span key={i} className={`candle ${i < blown ? 'blown' : ''}`}
+                                    onClick={() => { if (!cut && i >= blown) { setBlown(i+1); if (window.confetti) confetti({ particleCount:5, spread:30 }); } }}>
+                                    🕯️
+                                </span>
+                            ))}
+                        </div>
+                        <div className="cake-status">{cut ? '🎉 Cake cut! Happy Birthday! 🎉' : `${total-blown} candles burning - Blow or tap`}</div>
+                        {!cut && (
+                            <button className="cut-btn" disabled={blown !== total}
+                                onClick={() => { setCut(true); if (window.confetti) confetti({ particleCount:150, spread:80 }); }}>
+                                🍰 Cut Cake
+                            </button>
+                        )}
+                        {cut && <button className="cake-next-btn" onClick={onNext}>Enter your storyline 💫</button>}
                     </div>
                 </div>
-                <div className="reason-counter">Reason {index + 1} of {reasons.length}</div>
-                <button className={`reasons-btn ${index === reasons.length - 1 ? 'story-mode' : ''}`} onClick={handleClick}>
-                    {index === reasons.length - 1 ? "You're the BESTEST ! 💖" : "Click Here... 💕"}
-                </button>
-            </div>
-        );
-    }
+            );
+        }
 
-    function PhotoScreen({ wishData, openLightbox, onNext }) {
-        const photos = wishData.photos || [];
-        return (
-            <div className="photo-screen show">
-                <div className="photo-header">
-                    <h1>Our Beautiful Moments Together</h1>
-                    <p>Every moment spent with you has been magical...</p>
-                </div>
-                <div className="photo-container">
-                    {photos.map((p, i) => (
-                        <div key={i} className="photo-card" onClick={() => openLightbox(p.url)} role="button" aria-label={`View photo: ${p.date}`}>
-                            <img src={p.url} className="photo-img" alt={p.date || 'Memory'} />
-                            <div className="photo-date">{p.date}</div>
-                            <div className="photo-caption">{p.caption}</div>
+        function ReasonsScreen({ wishData, onNext }) {
+            const [index, setIndex] = useState(0);
+            const reasons = wishData.reasons || [];
+            useEffect(() => { if (!reasons.length) { setTimeout(onNext, 100); } }, []);
+            if (!reasons.length) return null;
+            const r = reasons[index] || reasons[0];
+            return (
+                <div className="reasons-screen show">
+                    <div className="reasons-header"><h1>Happy Birthday {wishData.birthdayName}.. 💖</h1></div>
+                    <div className="reasons-container">
+                        <div className="reason-card">
+                            <div className="reason-text">{r.emoji} {r.text}</div>
+                            <div className="reason-emoji">{r.emoji}</div>
                         </div>
-                    ))}
+                    </div>
+                    <div className="reason-counter">Reason {index+1} of {reasons.length}</div>
+                    <button className="reasons-btn" onClick={() => index < reasons.length-1 ? setIndex(index+1) : onNext()}>
+                        {index === reasons.length-1 ? "You're the BESTEST ! 💖" : "Click Here... 💕"}
+                    </button>
                 </div>
-                <button className="photo-next-btn" onClick={onNext}>Again Your Storylane 🎥</button>
-            </div>
-        );
-    }
+            );
+        }
 
-    function VideoScreen({ wishData, onNext }) {
-        const videos = wishData.videos || [];
-        return (
-            <div className="video-screen show">
-                <h2>A Special Video Message</h2>
-                <div className="video-container">
-                    <div className="video-grid">
-                        {videos.map((v, i) => (
-                            <div key={i} className="video-card">
-                                <h3>{v.title}</h3>
-                                <div className="video-wrapper">
-                                    <video controls preload="metadata">
-                                        <source src={v.url} type="video/mp4" />
-                                        Your browser does not support video.
-                                    </video>
-                                </div>
+        function PhotoScreen({ wishData, openLightbox, onNext }) {
+            return (
+                <div className="photo-screen show">
+                    <div className="photo-header"><h1>Our Beautiful Moments Together</h1><p>Every moment with you is magical...</p></div>
+                    <div className="photo-container">
+                        {(wishData.photos || []).map((p, i) => (
+                            <div key={i} className="photo-card" onClick={() => openLightbox(p.url)}>
+                                <img src={p.url} className="photo-img" />
+                                <div className="photo-date">{p.date}</div>
+                                <div className="photo-caption">{p.caption}</div>
                             </div>
                         ))}
                     </div>
-                    <button className="video-next-btn" onClick={onNext}>See your letter 💌</button>
+                    <button className="photo-next-btn" onClick={onNext}>Again Your Storylane 🎥</button>
                 </div>
-            </div>
-        );
-    }
+            );
+        }
 
-    function LetterScreen({ wishData, onNext }) {
-        return (
-            <div className="letter-screen show">
-                <div className="letter-container">
-                    <h2>A Letter for You Babiee 💌</h2>
-                    <div className="letter-content">{wishData.letter}</div>
-                    <button className="letter-return-btn" onClick={onNext}>Again, Happy Birthday My Honey 💖</button>
+        function VideoScreen({ wishData, onNext }) {
+            return (
+                <div className="video-screen show">
+                    <h2>A Special Video Message</h2>
+                    <div className="video-container">
+                        <div className="video-grid">
+                            {(wishData.videos || []).map((v, i) => (
+                                <div key={i} className="video-card">
+                                    <h3>{v.title}</h3>
+                                    <div className="video-wrapper">
+                                        <video controls><source src={v.url} type="video/mp4" /></video>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <button className="video-next-btn" onClick={onNext}>See your letter 💌</button>
+                    </div>
                 </div>
-            </div>
-        );
-    }
+            );
+        }
 
-    function SecretScreen({ wishData, openLightbox }) {
-        return (
-            <div className="secret-screen show">
-                <div className="secret-container">
-                    <img
-                        src={wishData.secretPhoto}
-                        className="secret-photo"
-                        alt="Secret"
-                        onClick={() => openLightbox(wishData.secretPhoto)}
-                    />
-                    <p style={{marginTop:'20px', fontWeight:'bold'}}>With love, {wishData.birthdayName} 💕</p>
-                    <button className="soulmate-btn" onClick={() => window.open(wishData.instagram || 'https://instagram.com', '_blank')}>
-                        <i className="fab fa-instagram"></i> See Your Soulmate
-                    </button>
+        function LetterScreen({ wishData, onNext }) {
+            return (
+                <div className="letter-screen show">
+                    <div className="letter-container">
+                        <h2>A Letter for You Babiee 💌</h2>
+                        <div className="letter-content">{wishData.letter}</div>
+                        <button className="letter-return-btn" onClick={onNext}>Again, Happy Birthday My Honey</button>
+                    </div>
                 </div>
-            </div>
-        );
-    }
+            );
+        }
 
-    function App() {
-        return (
-            <HashRouter>
-                <Routes>
-                    <Route path="/" element={<LoginPage />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/wish/:wishId" element={<WishPage />} />
-                </Routes>
-            </HashRouter>
-        );
-    }
+        function SecretScreen({ wishData, openLightbox }) {
+            return (
+                <div className="secret-screen show">
+                    <div className="secret-container">
+                        <img src={wishData.secretPhoto} className="secret-photo" onClick={() => openLightbox(wishData.secretPhoto)} />
+                        <p style={{marginTop:'20px', fontWeight:'bold'}}>With love, {wishData.birthdayName}</p>
+                        <button className="soulmate-btn" onClick={() => window.open(wishData.instagram || 'https://instagram.com', '_blank')}>
+                            <i className="fab fa-instagram"></i> See Your Soulmate
+                        </button>
+                    </div>
+                </div>
+            );
+        }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-</script>
+        function App() {
+            return (
+                <HashRouter>
+                    <Routes>
+                        <Route path="/" element={<LoginPage />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/wish/:wishId" element={<WishPage />} />
+                    </Routes>
+                </HashRouter>
+            );
+        }
+
+        try {
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<App />);
+        } catch (error) {
+            document.getElementById('root').innerHTML = '<h1 style="text-align:center; margin-top:100px; color:red;">Error: ' + error.message + '</h1>';
+        }
+    </script>
 </body>
 </html>
