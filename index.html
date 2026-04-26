@@ -151,7 +151,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // ======================== YOUR CONFIGURATION (তোমার তথ্য) ========================
+        // ======================== YOUR CONFIGURATION ========================
         const firebaseConfig = {
             apiKey: "AIzaSyC18r8GPtooLmUBnOGRBQUIKOodPvHRX8o",
             authDomain: "birthday-website-33f71.firebaseapp.com",
@@ -162,14 +162,14 @@
             measurementId: "G-T3JH3J4N87"
         };
         const CLOUDINARY_CLOUD_NAME = "dpctt0wao";
-        const CLOUDINARY_UPLOAD_PRESET = "wish_uploads";
+        const CLOUDINARY_UPLOAD_PRESET = "birthday_upload";   // ✅ আপডেটেড
         // ===================================================================
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        const { useState, useEffect, useRef, useCallback } = React;
+        const { useState, useEffect, useRef } = React;
         const { HashRouter, Routes, Route, useNavigate, useParams } = ReactRouterDOM;
 
         function ContactFloatingButton({ wishData }) {
