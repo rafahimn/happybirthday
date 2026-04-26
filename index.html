@@ -36,7 +36,6 @@
         .floating-hearts { position:fixed; width:100%; height:100%; pointer-events:none; z-index:2; }
         .heart-float { position:absolute; font-size:1.5rem; color:rgba(255,105,180,0.6); animation:floatHeart var(--float-duration,6s) ease-in-out infinite; animation-delay:var(--delay,0s); }
         @keyframes floatHeart { 0%{ transform:translate(0,100vh) rotate(0deg); } 100%{ transform:translate(var(--translate-x,0), -100vh) rotate(360deg); } }
-        /* Contact Icon Fixed */
         .contact-float-btn { position:fixed; bottom:20px; right:20px; z-index:9999; cursor:pointer; transition:transform 0.3s; border-radius:50%; box-shadow:0 0 20px rgba(255,215,0,0.5); width:50px; height:50px; overflow:hidden; }
         .contact-float-btn img { width:100%; height:100%; object-fit:cover; border-radius:50%; border:2px solid gold; }
         .contact-float-btn:hover { transform:scale(1.2); }
@@ -52,7 +51,6 @@
         .admin-table { width:100%; border-collapse:collapse; margin-top:20px; }
         .admin-table th { background:#ff69b4; color:white; padding:10px; }
         .admin-table td { padding:10px; border:1px solid #ddd; }
-        /* (remaining styles identical to earlier full version) */
         .countdown-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg, rgba(255,209,220,0.4), rgba(230,230,250,0.4)); backdrop-filter:blur(8px); z-index:1000; text-align:center; }
         .countdown-box { display:flex; gap:10px; justify-content:center; margin:20px 0; }
         .count-item { background:rgba(255,255,255,0.3); padding:12px 15px; border-radius:20px; min-width:70px; }
@@ -97,13 +95,12 @@
         };
         const CLOUDINARY_CLOUD_NAME = "dpctt0wao";
         const CLOUDINARY_UPLOAD_PRESET = "birthday_upload";
-        // Fixed contact info – your original design
         const ADMIN_CONTACT = {
             photo: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg",
             facebook: "https://www.facebook.com/rafahimn",
             instagram: "https://www.instagram.com/rafahimn"
         };
-        const ADMIN_PASSWORD = "admin123"; // change if you want
+        const ADMIN_PASSWORD = "admin123";
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -139,7 +136,6 @@
             return currentPath === path ? element() : null;
         }
 
-        // Floating effects
         function startFloatingHearts() {
             setInterval(() => {
                 const container = document.querySelector('.floating-hearts');
@@ -147,7 +143,7 @@
                 const heart = document.createElement('div');
                 heart.className = 'heart-float';
                 heart.textContent = ['💖','💝','💗','💓','💕'][Math.floor(Math.random()*5)];
-                heart.style.left = Math.random() * 100 + '%';
+                heart.style.left = Math.random()*100+'%';
                 heart.style.setProperty('--float-duration', (Math.random()*4+4)+'s');
                 heart.style.setProperty('--delay', Math.random()*3+'s');
                 heart.style.setProperty('--translate-x', (Math.random()*60-30)+'px');
@@ -170,7 +166,6 @@
             }, 2000);
         }
 
-        // Contact Fixed Button (original design)
         function ContactFloatingButton() {
             const [open, setOpen] = useState(false);
             return (
@@ -244,6 +239,7 @@
                 secretPhoto: ''
             });
             const [saving, setSaving] = useState(false);
+            const [error, setError] = useState('');
 
             const handleChange = (e) => {
                 const { name, value } = e.target;
@@ -251,21 +247,24 @@
             };
 
             const handleSubmit = async () => {
+                setError('');
                 if (!auth.currentUser) { alert('Please login first'); return; }
-                if (!form.birthdayName.trim()) { alert('Enter birthday person name'); return; }
+                if (!form.birthdayName.trim()) { alert('Please enter the birthday person name'); return; }
                 setSaving(true);
                 try {
                     const wishId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-                    await db.collection('wishes').doc(wishId).set({
+                    const dataToSave = {
                         ...form,
                         userId: auth.currentUser.uid,
                         userEmail: auth.currentUser.email,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    alert('Wish page created! Link: ' + window.location.origin + window.location.pathname + '#/wish/' + wishId);
+                    };
+                    await db.collection('wishes').doc(wishId).set(dataToSave);
+                    alert('Wish page created! Opening now...');
                     navigate(`/wish/${wishId}`);
                 } catch (err) {
-                    alert('Error: ' + err.message);
+                    console.error(err);
+                    setError('❌ Failed: ' + err.message);
                 } finally {
                     setSaving(false);
                 }
@@ -312,17 +311,15 @@
                         </div>
                         <div className="form-group"><label>Countdown Audio</label>
                             <button type="button" onClick={() => uploadToCloudinary(url => setForm(prev => ({...prev, countdownAudio: url})))}>🎵 Upload</button>
-                            {form.countdownAudio && <span> ✅ Uploaded</span>}
                         </div>
                         <div className="form-group"><label>Birthday Wish Audio</label>
                             <button type="button" onClick={() => uploadToCloudinary(url => setForm(prev => ({...prev, wishAudio: url})))}>🎶 Upload</button>
-                            {form.wishAudio && <span> ✅ Uploaded</span>}
                         </div>
                         <div className="form-group"><label>Love Letter</label><textarea name="letter" value={form.letter} onChange={handleChange} /></div>
                         <div className="form-group"><label>Secret Photo</label>
                             <button type="button" onClick={() => uploadToCloudinary(url => setForm(prev => ({...prev, secretPhoto: url})))}>🖼️ Upload</button>
-                            {form.secretPhoto && <span> ✅ Uploaded</span>}
                         </div>
+                        {error && <p style={{color:'red', marginBottom:'10px'}}>{error}</p>}
                         <button className="submit-btn" onClick={handleSubmit} disabled={saving}>
                             {saving ? 'Creating...' : '✨ Create My Wish Page ✨'}
                         </button>
@@ -337,28 +334,19 @@
             const [password, setPassword] = useState('');
             const [authenticated, setAuthenticated] = useState(false);
             const [wishes, setWishes] = useState([]);
-            const [loading, setLoading] = useState(false);
 
             const fetchWishes = async () => {
-                setLoading(true);
-                try {
-                    const snap = await db.collection('wishes').orderBy('createdAt','desc').get();
-                    const data = [];
-                    snap.forEach(doc => data.push({id: doc.id, ...doc.data()}));
-                    setWishes(data);
-                } catch (err) {
-                    alert('Error: ' + err.message);
-                }
-                setLoading(false);
+                const snap = await db.collection('wishes').orderBy('createdAt','desc').get();
+                const data = [];
+                snap.forEach(doc => data.push({id: doc.id, ...doc.data()}));
+                setWishes(data);
             };
 
             const handleLogin = () => {
                 if (password === ADMIN_PASSWORD) {
                     setAuthenticated(true);
                     fetchWishes();
-                } else {
-                    alert('Wrong password!');
-                }
+                } else alert('Wrong password!');
             };
 
             if (!authenticated) {
@@ -368,9 +356,7 @@
                         <input type="password" placeholder="Enter admin password" value={password}
                             onChange={e => setPassword(e.target.value)}
                             style={{ width:'100%', padding:'10px', borderRadius:'20px', border:'1px solid #ccc', margin:'10px 0' }} />
-                        <button onClick={handleLogin} style={{ padding:'10px 25px', background:'#ff69b4', color:'white', border:'none', borderRadius:'20px', cursor:'pointer' }}>
-                            Login
-                        </button>
+                        <button onClick={handleLogin} style={{ padding:'10px 25px', background:'#ff69b4', color:'white', border:'none', borderRadius:'20px', cursor:'pointer' }}>Login</button>
                         <button onClick={() => navigate('/dashboard')} className="logout-btn" style={{ marginLeft:'10px' }}>Back</button>
                     </div>
                 );
@@ -383,24 +369,22 @@
                         <button className="logout-btn" onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
                     </div>
                     <p>Total wishes: <strong>{wishes.length}</strong></p>
-                    {loading ? <p>Loading...</p> : (
-                        <table className="admin-table">
-                            <thead>
-                                <tr><th>#</th><th>For</th><th>Created By</th><th>Date</th><th>Link</th></tr>
-                            </thead>
-                            <tbody>
-                                {wishes.map((w,i) => (
-                                    <tr key={w.id}>
-                                        <td>{i+1}</td>
-                                        <td>{w.birthdayName}</td>
-                                        <td>{w.userEmail || 'Unknown'}</td>
-                                        <td>{w.createdAt ? new Date(w.createdAt.seconds*1000).toLocaleDateString() : 'N/A'}</td>
-                                        <td><a href={`#/wish/${w.id}`} style={{color:'#ff69b4'}}>Open 🔗</a></td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
+                    <table className="admin-table">
+                        <thead>
+                            <tr><th>#</th><th>For</th><th>Created By</th><th>Date</th><th>Link</th></tr>
+                        </thead>
+                        <tbody>
+                            {wishes.map((w,i) => (
+                                <tr key={w.id}>
+                                    <td>{i+1}</td>
+                                    <td>{w.birthdayName}</td>
+                                    <td>{w.userEmail || 'Unknown'}</td>
+                                    <td>{w.createdAt ? new Date(w.createdAt.seconds*1000).toLocaleDateString() : 'N/A'}</td>
+                                    <td><a href={`#/wish/${w.id}`} style={{color:'#ff69b4'}}>Open 🔗</a></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             );
         }
