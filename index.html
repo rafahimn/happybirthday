@@ -2,441 +2,199 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Birthday Wish Hub 💫</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.23.9/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Comic+Neue:wght@700&family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Quicksand',sans-serif; overflow-x:hidden; color:#4a4a4a; min-height:100vh; }
-        .video-bg { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-2; filter:brightness(0.8); animation:slowZoom 20s infinite alternate; }
-        @keyframes slowZoom { from{ transform:scale(1); } to{ transform:scale(1.05); } }
-        .overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg, rgba(255,192,203,0.3), rgba(147,112,219,0.3)); z-index:-1; }
-        .floating-elements { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:5; overflow:hidden; }
-        .float-item { position:absolute; font-size:2rem; opacity:0.5; animation:simpleFloat 12s infinite ease-in-out; filter:drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
-        @keyframes simpleFloat { 0%{ transform:translate(0,100vh) rotate(0deg); opacity:0; } 20%{ opacity:0.8; transform:translate(15vw,80vh) rotate(15deg); } 50%{ transform:translate(40vw,50vh) rotate(30deg); } 80%{ opacity:0.8; transform:translate(70vw,20vh) rotate(15deg); } 100%{ transform:translate(90vw,-10vh) rotate(0deg); opacity:0; } }
-        .butterfly { font-size:2.2rem; animation:flutter 2s infinite alternate ease-in-out; }
-        @keyframes flutter { 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-8px) rotate(5deg); } }
-        .flower { font-size:1.8rem; animation:spin 12s infinite linear; }
-        @keyframes spin { from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
-        .magic-sparkles { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }
-        .magic-sparkles::before, .magic-sparkles::after { content:''; position:absolute; width:100%; height:100%; background-image:radial-gradient(circle, white 1px, transparent 1px); background-size:50px 50px; animation:sparkleLayer 8s linear infinite; opacity:0.5; }
-        .magic-sparkles::after { animation-delay:-4s; transform:rotate(45deg); }
-        @keyframes sparkleLayer { 0%{ transform:translateY(0); } 100%{ transform:translateY(-50px); } }
-        .floating-hearts { position:fixed; width:100%; height:100%; pointer-events:none; z-index:2; }
-        .heart-float { position:absolute; font-size:1.5rem; color:rgba(255,105,180,0.6); animation:floatHeart var(--float-duration,6s) ease-in-out infinite; animation-delay:var(--delay,0s); }
-        @keyframes floatHeart { 0%{ transform:translate(0,100vh) rotate(0deg); } 100%{ transform:translate(var(--translate-x,0), -100vh) rotate(360deg); } }
-        .contact-float-btn { position:fixed; bottom:20px; right:20px; z-index:9999; cursor:pointer; transition:transform 0.3s; border-radius:50%; box-shadow:0 0 20px rgba(255,215,0,0.5); width:50px; height:50px; overflow:hidden; }
-        .contact-float-btn img { width:100%; height:100%; object-fit:cover; border-radius:50%; border:2px solid gold; }
-        .contact-float-btn:hover { transform:scale(1.2); }
-        .contact-modal { position:fixed; bottom:80px; right:20px; background:rgba(255,255,255,0.95); backdrop-filter:blur(10px); border-radius:20px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:10000; display:flex; flex-direction:column; align-items:center; gap:10px; }
-        .login-container { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; z-index:1; }
-        .login-btn { background:white; color:#333; padding:12px 30px; border-radius:30px; font-size:18px; border:none; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.2); transition:0.3s; display:inline-flex; align-items:center; gap:8px; }
-        .form-container { max-width:600px; margin:20px auto; background:rgba(255,255,255,0.9); padding:30px; border-radius:30px; box-shadow:0 15px 35px rgba(0,0,0,0.2); }
-        .form-group { margin-bottom:15px; }
-        .form-group label { display:block; font-weight:600; margin-bottom:5px; }
-        .form-group input, .form-group textarea { width:100%; padding:10px; border-radius:20px; border:1px solid #ddd; font-family:inherit; }
-        .submit-btn { background:linear-gradient(45deg,#ff69b4,#ff99cc); color:white; border:none; padding:12px 30px; border-radius:30px; font-size:18px; cursor:pointer; width:100%; }
-        .logout-btn { background: #ccc; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
-        .admin-table { width:100%; border-collapse:collapse; margin-top:20px; }
-        .admin-table th { background:#ff69b4; color:white; padding:10px; }
-        .admin-table td { padding:10px; border:1px solid #ddd; }
-        .countdown-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg, rgba(255,209,220,0.4), rgba(230,230,250,0.4)); backdrop-filter:blur(8px); z-index:1000; text-align:center; }
-        .countdown-box { display:flex; gap:10px; justify-content:center; margin:20px 0; }
-        .count-item { background:rgba(255,255,255,0.3); padding:12px 15px; border-radius:20px; min-width:70px; }
-        .count-number { font-size:clamp(28px,6vw,40px); font-weight:800; color:#fff; display:block; }
-        .greeting-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(-45deg,#fee9f7,#e8f5fe,#fef2e8,#f0ffe8); background-size:400% 400%; animation:gradientBG 15s ease infinite; z-index:900; }
-        .greeting-screen.show { display:flex; } @keyframes gradientBG { 0%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } 100%{ background-position:0% 50%; } }
-        .enter-btn { padding:1rem 2rem; font-size:1.2rem; background:linear-gradient(45deg,#ff69b4,#ff99cc); border:none; border-radius:50px; color:white; cursor:pointer; }
-        .cake-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); z-index:800; }
-        .cake-screen.show { display:flex; }
-        .cake-container { background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); padding:30px; border-radius:40px; max-width:500px; }
-        .candles { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:20px 0; }
-        .candle { cursor:pointer; font-size:40px; animation:flicker 0.5s infinite alternate; }
-        .candle.blown { opacity:0.2; filter:grayscale(1); animation:none; }
-        @keyframes flicker { from{ opacity:1; transform:scale(1); } to{ opacity:0.8; transform:scale(1.1); } }
-        .cut-btn { background:linear-gradient(45deg,gold,red); color:black; font-size:22px; padding:12px; border:none; border-radius:40px; font-weight:bold; cursor:pointer; width:100%; }
-        .cut-btn:disabled { opacity:0.3; }
-        .cake-next-btn { margin-top:15px; padding:12px 30px; background:linear-gradient(45deg,#9b6dff,#ff6dc7); border:none; border-radius:50px; color:white; cursor:pointer; }
-        .reasons-screen, .photo-screen, .video-screen, .letter-screen, .secret-screen { position:fixed; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; z-index:700; }
-        .photo-screen.show, .video-screen.show, .letter-screen.show, .secret-screen.show, .reasons-screen.show { display:flex; }
-        .photo-screen { overflow-y:auto; background:linear-gradient(135deg,#ffd1dc,#e6e6fa); justify-content:flex-start; padding-top:80px; }
-        .photo-container { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:2rem; }
-        .photo-card { background:rgba(255,255,255,0.9); border-radius:20px; padding:1.5rem; cursor:pointer; }
-        .photo-img { width:100%; height:250px; object-fit:cover; border-radius:15px; }
-        .lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10001; justify-content:center; align-items:center; }
-        .lightbox.show { display:flex; }
-        .lightbox img { max-width:90%; max-height:90%; border-radius:10px; }
-        .lightbox .close { position:absolute; top:20px; right:30px; font-size:40px; color:white; cursor:pointer; }
+        body { font-family:Arial,sans-serif; background:linear-gradient(135deg,#ff9a9e,#fad0c4); min-height:100vh; display:flex; align-items:center; justify-content:center; }
+        .container { background:white; padding:40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.2); max-width:500px; width:90%; text-align:center; }
+        h1 { color:#d4145a; margin-bottom:20px; }
+        input, textarea { width:100%; padding:12px; margin:8px 0; border-radius:10px; border:1px solid #ddd; font-size:16px; }
+        button { background:linear-gradient(45deg,#ff69b4,#ff99cc); color:white; padding:12px 30px; border:none; border-radius:30px; font-size:18px; cursor:pointer; margin-top:10px; width:100%; }
+        button:hover { transform:scale(1.02); }
+        .wish-link { background:#f0f0f0; padding:15px; border-radius:10px; margin:10px 0; word-break:break-all; }
+        .admin-section { margin-top:30px; background:#ffe6f0; padding:20px; border-radius:10px; }
+        table { width:100%; border-collapse:collapse; margin-top:10px; }
+        th { background:#ff69b4; color:white; padding:8px; }
+        td { padding:8px; border-bottom:1px solid #ddd; }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="container" id="app">
+        <!-- Dynamic content goes here -->
+    </div>
 
-    <script type="text/babel">
-        const firebaseConfig = {
-            apiKey: "AIzaSyC18r8GPtooLmUBnOGRBQUIKOodPvHRX8o",
-            authDomain: "birthday-website-33f71.firebaseapp.com",
-            projectId: "birthday-website-33f71",
-            storageBucket: "birthday-website-33f71.firebasestorage.app",
-            messagingSenderId: "800374135757",
-            appId: "1:800374135757:web:2b4a058f708972e3e10284",
-            measurementId: "G-T3JH3J4N87"
-        };
-        const CLOUDINARY_CLOUD_NAME = "dpctt0wao";
-        const CLOUDINARY_UPLOAD_PRESET = "birthday_upload";
-        const ADMIN_CONTACT = {
-            photo: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg",
-            facebook: "https://www.facebook.com/rafahimn",
-            instagram: "https://www.instagram.com/rafahimn"
-        };
+    <script>
         const ADMIN_PASSWORD = "admin123";
+        const CONTACT = {
+            photo: "https://res.cloudinary.com/dpctt0wao/image/upload/v1773163463/WhatsApp_Image_2026-03-10_at_11.18.34_PM_nc8tpd.jpg",
+            fb: "https://www.facebook.com/rafahimn",
+            ig: "https://www.instagram.com/rafahimn"
+        };
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        const { useState, useEffect, createContext, useContext } = React;
-        const RouterContext = createContext();
-
-        function useHashRouter() {
-            const [hash, setHash] = useState(window.location.hash.slice(1) || '/');
-            useEffect(() => {
-                const f = () => setHash(window.location.hash.slice(1) || '/');
-                window.addEventListener('hashchange', f);
-                return () => window.removeEventListener('hashchange', f);
-            }, []);
-            const navigate = (p) => { window.location.hash = p; };
-            return { path: hash, navigate };
+        function saveWish(data) {
+            const wishes = JSON.parse(localStorage.getItem('wishes') || '[]');
+            const id = Date.now().toString(36);
+            wishes.push({ id, ...data, createdAt: new Date().toISOString() });
+            localStorage.setItem('wishes', JSON.stringify(wishes));
+            return id;
         }
 
-        function Route({ path, element }) {
-            const { path: cp } = useContext(RouterContext);
-            if (path.includes(':')) {
-                const re = new RegExp('^' + path.replace(/:\w+/g, '([^/]+)') + '$');
-                const m = cp.match(re);
-                if (m) {
-                    const keys = [...path.matchAll(/:\w+/g)].map(k => k[0].slice(1));
-                    const par = {};
-                    keys.forEach((k, i) => par[k] = m[i + 1]);
-                    return element(par);
-                }
-                return null;
+        function getWishes() {
+            return JSON.parse(localStorage.getItem('wishes') || '[]');
+        }
+
+        function getWish(id) {
+            return getWishes().find(w => w.id === id);
+        }
+
+        function navigate(hash) {
+            window.location.hash = hash;
+        }
+
+        function render() {
+            const hash = window.location.hash.slice(1) || '/';
+            const app = document.getElementById('app');
+
+            if (hash === '/') {
+                // Home Page - Create Wish Form
+                app.innerHTML = `
+                    <h1>🎂 Create Birthday Wish Page</h1>
+                    <input id="name" placeholder="Birthday Person's Name *" required />
+                    <input id="date" type="date" />
+                    <input id="time" type="time" />
+                    <input id="age" type="number" placeholder="Age (Number of candles)" value="18" />
+                    <textarea id="greeting" placeholder="Greeting Message"></textarea>
+                    <textarea id="reasons" placeholder="4 Reasons (one per line)"></textarea>
+                    <textarea id="photos" placeholder="Photo URLs with caption (url|caption)"></textarea>
+                    <textarea id="videos" placeholder="Video URLs (one per line)"></textarea>
+                    <input id="audio" placeholder="Audio URL (optional)" />
+                    <textarea id="letter" placeholder="Love Letter"></textarea>
+                    <button onclick="createWish()">✨ Create My Wish Page ✨</button>
+                    <br><small><a href="#/admin" style="color:#ff69b4;">Admin Panel</a></small>
+                `;
             }
-            return cp === path ? element() : null;
-        }
-
-        function ContactBtn() {
-            const [o, setO] = useState(false);
-            return (
-                <>
-                    <div className="contact-float-btn" onClick={() => setO(!o)}>
-                        <img src={ADMIN_CONTACT.photo} alt="C" />
-                    </div>
-                    {o && (
-                        <div className="contact-modal">
-                            <p><b>Contact</b></p>
-                            <a href={ADMIN_CONTACT.facebook} target="_blank"><i className="fab fa-facebook"></i> Facebook</a>
-                            <a href={ADMIN_CONTACT.instagram} target="_blank"><i className="fab fa-instagram"></i> Instagram</a>
-                            <button className="logout-btn" onClick={() => setO(false)}>Close</button>
-                        </div>
-                    )}
-                </>
-            );
-        }
-
-        function uploadFile(cb) {
-            window.cloudinary.openUploadWidget({
-                cloudName: CLOUDINARY_CLOUD_NAME,
-                uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-                sources: ['local', 'url', 'camera'],
-                multiple: false,
-            }, (err, res) => {
-                if (!err && res && res.event === 'success') cb(res.info.secure_url);
-            });
-        }
-
-        function Login() {
-            const { navigate } = useContext(RouterContext);
-            const go = async () => {
-                try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); navigate('/dashboard'); }
-                catch (e) { alert(e.message); }
-            };
-            return (
-                <div>
-                    <video className="video-bg" autoPlay muted loop playsInline src="https://assets.mixkit.co/videos/preview/mixkit-candles-in-the-dark-1327-large.mp4" />
-                    <div className="overlay" />
-                    <div className="login-container">
-                        <h1 style={{color:'white',marginBottom:20}}>Create Your Own Birthday Wish Page</h1>
-                        <button className="login-btn" onClick={go}><i className="fab fa-google"></i> Login with Google</button>
-                    </div>
-                    <ContactBtn />
-                </div>
-            );
-        }
-
-        function Dash() {
-            const { navigate } = useContext(RouterContext);
-            const [f, setF] = useState({
-                birthdayName:'', month:2, day:15, hour:0, minute:0, age:17,
-                greetingText:'', reasons:[{text:'',emoji:'💖'},{text:'',emoji:'💗'},{text:'',emoji:'💕'},{text:'',emoji:'🌟'}],
-                photos:[], videos:[], countdownAudio:'', wishAudio:'', letter:'', secretPhoto:''
-            });
-            const [saving, setSaving] = useState(false);
-
-            const create = async () => {
-                if (!f.birthdayName.trim()) return alert('Enter name please');
-                setSaving(true);
-                const id = Date.now().toString(36) + Math.random().toString(36).substr(2,5);
-                try {
-                    await db.collection('wishes').doc(id).set({
-                        ...f,
-                        userId: auth.currentUser?.uid || '',
-                        userEmail: auth.currentUser?.email || '',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    navigate('/wish/' + id);
-                } catch (e) {
-                    alert('Error: ' + e.message);
-                } finally {
-                    setSaving(false);
+            else if (hash.startsWith('/wish/')) {
+                const id = hash.split('/wish/')[1];
+                const wish = getWish(id);
+                if (!wish) {
+                    app.innerHTML = '<h1>Wish not found 😢</h1><br><a href="/">Create yours</a>';
+                    return;
                 }
+                const photos = (wish.photos || '').split('\n').filter(p => p.trim()).map(p => {
+                    const [url, caption] = p.split('|');
+                    return { url: url?.trim(), caption: caption?.trim() || '' };
+                });
+                const reasons = (wish.reasons || '').split('\n').filter(r => r.trim());
+                
+                let html = `<h1>🎂 Happy Birthday ${wish.name} ❤️</h1>`;
+                html += `<p>${wish.greeting || ''}</p>`;
+                
+                // Photos
+                if (photos.length) {
+                    html += '<div style="display:flex;flex-wrap:wrap;gap:10px;margin:20px 0;">';
+                    photos.forEach(p => {
+                        html += `<div style="text-align:center;"><img src="${p.url}" style="width:150px;height:150px;object-fit:cover;border-radius:10px;" /><br><small>${p.caption}</small></div>`;
+                    });
+                    html += '</div>';
+                }
+                
+                // Videos
+                if (wish.videos) {
+                    wish.videos.split('\n').filter(v => v.trim()).forEach(v => {
+                        html += `<video controls style="width:100%;max-width:400px;margin:10px 0;border-radius:10px;"><source src="${v.trim()}" /></video>`;
+                    });
+                }
+                
+                // Audio
+                if (wish.audio) {
+                    html += `<audio controls style="width:100%;max-width:400px;margin:10px 0;"><source src="${wish.audio}" /></audio>`;
+                }
+                
+                // Reasons
+                if (reasons.length) {
+                    html += '<ul style="text-align:left;margin:20px;">';
+                    reasons.forEach(r => html += `<li>${r}</li>`);
+                    html += '</ul>';
+                }
+                
+                // Letter
+                if (wish.letter) {
+                    html += `<div style="background:#fff0f5;padding:20px;border-radius:10px;margin:20px 0;white-space:pre-line;">${wish.letter}</div>`;
+                }
+                
+                html += '<br><a href="/">Create your own wish page</a>';
+                
+                // Contact button
+                html += `
+                    <div style="position:fixed;bottom:20px;right:20px;">
+                        <img src="${CONTACT.photo}" onclick="this.nextElementSibling.style.display='block'" style="width:50px;height:50px;border-radius:50%;cursor:pointer;border:2px solid gold;" />
+                        <div style="display:none;position:fixed;bottom:80px;right:20px;background:white;padding:15px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.2);">
+                            <a href="${CONTACT.fb}" target="_blank">Facebook</a><br>
+                            <a href="${CONTACT.ig}" target="_blank">Instagram</a><br>
+                            <button onclick="this.parentElement.style.display='none'" style="margin-top:5px;">Close</button>
+                        </div>
+                    </div>
+                `;
+                
+                app.innerHTML = html;
+            }
+            else if (hash === '/admin') {
+                const pw = prompt("Enter admin password:");
+                if (pw !== ADMIN_PASSWORD) {
+                    app.innerHTML = '<h1>Wrong password</h1><br><a href="/">Back</a>';
+                    return;
+                }
+                const wishes = getWishes();
+                let html = '<h1>📊 Admin Panel</h1><p>Total: ' + wishes.length + '</p>';
+                html += '<table><tr><th>#</th><th>Name</th><th>Date</th><th>Link</th></tr>';
+                wishes.forEach((w, i) => {
+                    html += `<tr><td>${i+1}</td><td>${w.name}</td><td>${new Date(w.createdAt).toLocaleDateString()}</td><td><a href="#/wish/${w.id}" target="_blank">Open 🔗</a></td></tr>`;
+                });
+                html += '</table><br><a href="/">Create New</a>';
+                app.innerHTML = html;
+            }
+        }
+
+        function createWish() {
+            const name = document.getElementById('name').value.trim();
+            if (!name) return alert('Please enter birthday person name');
+            
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            let month = 2, day = 15, hour = 0, minute = 0;
+            if (date) {
+                const d = new Date(date);
+                month = d.getMonth();
+                day = d.getDate();
+            }
+            if (time) {
+                const [h, m] = time.split(':');
+                hour = parseInt(h) || 0;
+                minute = parseInt(m) || 0;
+            }
+            
+            const data = {
+                name,
+                month, day, hour, minute,
+                age: parseInt(document.getElementById('age').value) || 18,
+                greeting: document.getElementById('greeting').value,
+                reasons: document.getElementById('reasons').value,
+                photos: document.getElementById('photos').value,
+                videos: document.getElementById('videos').value,
+                audio: document.getElementById('audio').value,
+                letter: document.getElementById('letter').value
             };
-
-            return (
-                <div style={{padding:20, maxWidth:800, margin:'0 auto'}}>
-                    <div style={{display:'flex',justifyContent:'space-between'}}>
-                        <h1>Customize Your Wish Page</h1>
-                        <div>
-                            <button className="logout-btn" style={{marginRight:10}} onClick={() => navigate('/admin')}>Admin</button>
-                            <button className="logout-btn" onClick={() => { auth.signOut(); navigate('/'); }}>Logout</button>
-                        </div>
-                    </div>
-                    <div className="form-container">
-                        <div className="form-group"><label>Birthday Person's Name *</label><input value={f.birthdayName} onChange={e => setF({...f,birthdayName:e.target.value})} /></div>
-                        <div className="form-group"><label>Birth Date</label><input type="date" onChange={e => { const d=new Date(e.target.value); setF({...f,month:d.getMonth(),day:d.getDate()}); }} /><input type="time" onChange={e => { const [h,m]=e.target.value.split(':'); setF({...f,hour:+h,minute:+m}); }} /></div>
-                        <div className="form-group"><label>Age (Candles)</label><input type="number" value={f.age} onChange={e => setF({...f,age:+e.target.value||17})} /></div>
-                        <div className="form-group"><label>Greeting</label><textarea value={f.greetingText} onChange={e => setF({...f,greetingText:e.target.value})} /></div>
-                        <div className="form-group"><label>4 Reasons</label>
-                            {f.reasons.map((r,i) => (
-                                <div key={i} style={{display:'flex',gap:5,marginBottom:5}}>
-                                    <input style={{width:50}} value={r.emoji} onChange={e => { const nr=[...f.reasons]; nr[i].emoji=e.target.value; setF({...f,reasons:nr}); }} />
-                                    <input style={{flex:1}} value={r.text} onChange={e => { const nr=[...f.reasons]; nr[i].text=e.target.value; setF({...f,reasons:nr}); }} />
-                                </div>
-                            ))}
-                        </div>
-                        <div className="form-group"><label>Photos</label><button type="button" onClick={() => uploadFile(url => setF({...f,photos:[...f.photos,{url,date:'Memory',caption:''}]}))}>📸 Upload</button>
-                            {f.photos.map((p,i) => (
-                                <div key={i} style={{display:'flex',gap:5,marginTop:5}}>
-                                    <input value={p.date} onChange={e => { const np=[...f.photos]; np[i].date=e.target.value; setF({...f,photos:np}); }} />
-                                    <input value={p.caption} onChange={e => { const np=[...f.photos]; np[i].caption=e.target.value; setF({...f,photos:np}); }} />
-                                </div>
-                            ))}
-                        </div>
-                        <div className="form-group"><label>Videos</label><button type="button" onClick={() => uploadFile(url => setF({...f,videos:[...f.videos,{url,title:'Video'}]}))}>🎥 Upload</button>
-                            {f.videos.map((v,i) => (
-                                <div key={i}><input value={v.title} onChange={e => { const nv=[...f.videos]; nv[i].title=e.target.value; setF({...f,videos:nv}); }} /></div>
-                            ))}
-                        </div>
-                        <div className="form-group"><label>Countdown Audio</label><button type="button" onClick={() => uploadFile(url => setF({...f,countdownAudio:url}))}>🎵 Upload</button></div>
-                        <div className="form-group"><label>Wish Audio</label><button type="button" onClick={() => uploadFile(url => setF({...f,wishAudio:url}))}>🎶 Upload</button></div>
-                        <div className="form-group"><label>Love Letter</label><textarea value={f.letter} onChange={e => setF({...f,letter:e.target.value})} /></div>
-                        <div className="form-group"><label>Secret Photo</label><button type="button" onClick={() => uploadFile(url => setF({...f,secretPhoto:url}))}>🖼️ Upload</button></div>
-                        <button className="submit-btn" onClick={create} disabled={saving}>{saving?'Creating...':'✨ Create My Wish Page ✨'}</button>
-                    </div>
-                    <ContactBtn />
-                </div>
-            );
+            
+            const id = saveWish(data);
+            const link = window.location.origin + window.location.pathname + '#/wish/' + id;
+            alert('Wish page created!\n\nYour link:\n' + link);
+            navigate('/wish/' + id);
         }
 
-        function Admin() {
-            const { navigate } = useContext(RouterContext);
-            const [pw, setPw] = useState('');
-            const [ok, setOk] = useState(false);
-            const [list, setList] = useState([]);
-
-            const load = async () => {
-                const snap = await db.collection('wishes').orderBy('createdAt','desc').get();
-                const arr = [];
-                snap.forEach(d => arr.push({id:d.id,...d.data()}));
-                setList(arr);
-            };
-
-            if (!ok) return (
-                <div style={{maxWidth:400,margin:'100px auto',textAlign:'center'}}>
-                    <h2>Admin Login</h2>
-                    <input type="password" placeholder="Password" value={pw} onChange={e => setPw(e.target.value)} style={{width:'100%',padding:10,borderRadius:20,border:'1px solid #ccc',margin:'10px 0'}} />
-                    <button onClick={() => pw===ADMIN_PASSWORD?(setOk(true),load()):alert('Wrong!')} style={{padding:'10px 25px',background:'#ff69b4',color:'white',border:'none',borderRadius:20,cursor:'pointer'}}>Login</button>
-                </div>
-            );
-
-            return (
-                <div style={{padding:20,maxWidth:1000,margin:'0 auto'}}>
-                    <div style={{display:'flex',justifyContent:'space-between'}}><h1>Admin Panel</h1><button className="logout-btn" onClick={() => navigate('/dashboard')}>Back</button></div>
-                    <p>Total: {list.length}</p>
-                    <table className="admin-table"><thead><tr><th>#</th><th>For</th><th>By</th><th>Date</th><th>Link</th></tr></thead><tbody>
-                        {list.map((w,i) => (
-                            <tr key={w.id}><td>{i+1}</td><td>{w.birthdayName}</td><td>{w.userEmail||'?'}</td><td>{w.createdAt?new Date(w.createdAt.seconds*1000).toLocaleDateString():'?'}</td><td><a href={'#/wish/'+w.id} style={{color:'#ff69b4'}}>Open</a></td></tr>
-                        ))}
-                    </tbody></table>
-                </div>
-            );
-        }
-
-        function Wish({ wishId }) {
-            const [d, setD] = useState(null);
-            const [step, setStep] = useState('countdown');
-            const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-            useEffect(() => {
-                db.collection('wishes').doc(wishId).get().then(r => { if(r.exists) setD(r.data()); else alert('Not found'); });
-            }, [wishId]);
-
-            useEffect(() => {
-                if (!d) return;
-                const t = setInterval(() => {
-                    if (new Date() >= new Date(new Date().getFullYear(), d.month, d.day, d.hour, d.minute)) { setStep('greeting'); clearInterval(t); }
-                }, 1000);
-                return () => clearInterval(t);
-            }, [d]);
-
-            if (!d) return <div style={{marginTop:100,textAlign:'center'}}>Loading...</div>;
-
-            const lb = (s) => { document.getElementById('li').src=s; document.getElementById('lb').classList.add('show'); };
-            const clb = () => document.getElementById('lb').classList.remove('show');
-
-            return (
-                <div>
-                    <ContactBtn />
-                    <div id="lb" className="lightbox" onClick={clb}><span className="close">&times;</span><img id="li" src="" /></div>
-                    {step==='countdown' && <Countdown d={d} mon={mon} />}
-                    {step==='greeting' && <div className="greeting-screen show"><h1 style={{fontFamily:'Bubblegum Sans',fontSize:'3rem',color:'#d4145a'}}>🎂 Happy Birthday {d.birthdayName} ❤️</h1><p style={{margin:20}}>{d.greetingText}</p><button className="enter-btn" onClick={() => setStep('cake')}>Enter 💕</button></div>}
-                    {step==='cake' && <Cake d={d} next={() => setStep('reasons')} />}
-                    {step==='reasons' && <Reasons d={d} next={() => setStep('photo')} />}
-                    {step==='photo' && <Photos d={d} lb={lb} next={() => setStep('video')} />}
-                    {step==='video' && <Videos d={d} next={() => setStep('letter')} />}
-                    {step==='letter' && <Letter d={d} next={() => setStep('secret')} />}
-                    {step==='secret' && <Secret d={d} lb={lb} />}
-                </div>
-            );
-        }
-
-        function Countdown({ d, mon }) {
-            const [t, setT] = useState({ days:0, hours:0, mins:0, secs:0 });
-            useEffect(() => {
-                const i = setInterval(() => {
-                    const bd = new Date(new Date().getFullYear(), d.month, d.day, d.hour, d.minute);
-                    if (new Date() >= bd) return;
-                    const df = bd - new Date();
-                    setT({ days:Math.floor(df/86400000), hours:Math.floor((df/3600000)%24), mins:Math.floor((df/60000)%60), secs:Math.floor((df/1000)%60) });
-                }, 1000);
-                return () => clearInterval(i);
-            }, [d]);
-            return (
-                <div className="countdown-screen" style={{display:'flex'}}>
-                    <h1 style={{color:'white'}}>⌛ Countdown...</h1>
-                    <div className="countdown-box">
-                        <div className="count-item"><span className="count-number">{String(t.days).padStart(2,'0')}</span><span className="count-label">Days</span></div>
-                        <div className="count-item"><span className="count-number">{String(t.hours).padStart(2,'0')}</span><span className="count-label">Hours</span></div>
-                        <div className="count-item"><span className="count-number">{String(t.mins).padStart(2,'0')}</span><span className="count-label">Mins</span></div>
-                        <div className="count-item"><span className="count-number">{String(t.secs).padStart(2,'0')}</span><span className="count-label">Secs</span></div>
-                    </div>
-                    <p style={{color:'white'}}>{d.day} {mon[d.month]} {d.hour}:{String(d.minute).padStart(2,'0')}</p>
-                </div>
-            );
-        }
-
-        function Cake({ d, next }) {
-            const [cut, setCut] = useState(false);
-            const [blown, setBlown] = useState(0);
-            const total = d.age||17;
-            return (
-                <div className="cake-screen show">
-                    <div className="cake-container">
-                        <div style={{fontSize:100,textAlign:'center'}}>{cut?'🍰':'🎂'}</div>
-                        <div className="candles">{Array.from({length:total}).map((_,i)=><span key={i} className={`candle ${i<blown?'blown':''}`} onClick={() => {if(!cut&&i>=blown){setBlown(i+1);if(i+1===total&&window.confetti)confetti({particleCount:100,spread:70});}}}>🕯️</span>)}</div>
-                        <div className="cake-status">{cut?'🎉 Cake cut! 🎉':`${total-blown} candles`}</div>
-                        {!cut&&<button className="cut-btn" disabled={blown!==total} onClick={()=>{setCut(true);if(window.confetti)confetti({particleCount:150,spread:80});}}>🍰 Cut Cake</button>}
-                        {cut&&<button className="cake-next-btn" onClick={next}>Enter storyline 💫</button>}
-                    </div>
-                </div>
-            );
-        }
-
-        function Reasons({ d, next }) {
-            const [i, setI] = useState(0);
-            const r = (d.reasons||[]).filter(x=>x.text.trim());
-            if (!r.length) { useEffect(()=>{setTimeout(next,100);},[]); return null; }
-            const c = r[i];
-            return (
-                <div className="reasons-screen show" style={{background:'linear-gradient(-45deg,#ffe6e6,#e6e6ff)'}}>
-                    <h2 style={{fontFamily:'Bubblegum Sans',color:'#ff69b4'}}>❤️ Reasons ❤️</h2>
-                    <div style={{background:'white',padding:30,borderRadius:20,maxWidth:400,textAlign:'center',margin:20}}><div style={{fontSize:'3rem'}}>{c.emoji}</div><p style={{fontSize:'1.3rem'}}>{c.text}</p></div>
-                    <p>{i+1} of {r.length}</p>
-                    <button className="enter-btn" onClick={() => i<r.length-1?setI(i+1):next()}>{i===r.length-1?'See Memories 🎉':'Next 💕'}</button>
-                </div>
-            );
-        }
-
-        function Photos({ d, lb, next }) {
-            return (
-                <div className="photo-screen show">
-                    <h1 style={{fontFamily:'Dancing Script',color:'#b0306e'}}>Our Beautiful Moments</h1>
-                    <div className="photo-container">{(d.photos||[]).map((p,i)=><div key={i} className="photo-card" onClick={()=>lb(p.url)}><img src={p.url} className="photo-img" /><div style={{fontFamily:'Dancing Script',color:'#c71585'}}>{p.date}</div><p>{p.caption}</p></div>)}</div>
-                    <button className="cake-next-btn" style={{display:'block',margin:'30px auto'}} onClick={next}>Watch Videos 🎥</button>
-                </div>
-            );
-        }
-
-        function Videos({ d, next }) {
-            return (
-                <div className="video-screen show" style={{background:'linear-gradient(135deg,#a8edea,#fed6e3)'}}>
-                    <h2 style={{fontFamily:'Dancing Script',color:'#b0306e'}}>Special Video Message</h2>
-                    <div className="video-grid">{(d.videos||[]).map((v,i)=><div key={i} className="video-card"><h3>{v.title}</h3><div style={{position:'relative',paddingBottom:'56.25%',height:0,overflow:'hidden',borderRadius:15}}><video controls style={{position:'absolute',top:0,left:0,width:'100%',height:'100%'}}><source src={v.url} /></video></div></div>)}</div>
-                    <button className="cake-next-btn" style={{display:'block',margin:'30px auto'}} onClick={next}>Read Letter 💌</button>
-                </div>
-            );
-        }
-
-        function Letter({ d, next }) {
-            return (
-                <div className="letter-screen show" style={{background:'#fdfbfb'}}>
-                    <div style={{maxWidth:600,background:'white',padding:'2rem',borderRadius:30,textAlign:'center'}}><h2 style={{fontFamily:'Dancing Script',color:'#b0306e'}}>A Letter for You 💌</h2><p style={{whiteSpace:'pre-line',lineHeight:1.8}}>{d.letter}</p><button className="enter-btn" onClick={next}>Again, Happy Birthday!</button></div>
-                </div>
-            );
-        }
-
-        function Secret({ d, lb }) {
-            return (
-                <div className="secret-screen show" style={{background:'#ffe6f0'}}>
-                    <div style={{maxWidth:500,background:'rgba(255,255,255,0.8)',padding:'2rem',borderRadius:40,textAlign:'center'}}><img src={d.secretPhoto} style={{width:'100%',maxHeight:400,objectFit:'cover',borderRadius:20}} onClick={()=>lb(d.secretPhoto)} /><h2 style={{marginTop:20,color:'#c71585'}}>With love, {d.birthdayName}</h2><button className="enter-btn" onClick={()=>window.open(ADMIN_CONTACT.instagram,'_blank')}><i className="fab fa-instagram"></i> Created with Love</button></div>
-                </div>
-            );
-        }
-
-        function App() {
-            const r = useHashRouter();
-            return (
-                <RouterContext.Provider value={r}>
-                    <Route path="/" element={() => <Login />} />
-                    <Route path="/dashboard" element={() => <Dash />} />
-                    <Route path="/admin" element={() => <Admin />} />
-                    <Route path="/wish/:wishId" element={(p) => <Wish wishId={p.wishId} />} />
-                </RouterContext.Provider>
-            );
-        }
-
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+        window.addEventListener('hashchange', render);
+        window.addEventListener('load', render);
     </script>
 </body>
 </html>
