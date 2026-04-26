@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Birthday Wish Hub 💫</title>
+
+    <!-- React & ReactDOM -->
     <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-router-dom@6.20.1/dist/umd/react-router-dom.production.min.js"></script>
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <!-- Cloudinary -->
     <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+    <!-- Babel -->
     <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.23.9/babel.min.js"></script>
+    <!-- GSAP & Confetti -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+    <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Comic+Neue:wght@700&family=Dancing+Script:wght@700&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -147,10 +153,39 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        const { useState, useEffect, useRef } = React;
-        const { HashRouter, Routes, Route, useNavigate, useParams } = ReactRouterDOM;
+        const { useState, useEffect, useRef, createContext, useContext } = React;
 
-        // Floating Hearts - vanilla JS (NO React hooks outside components)
+        // ---------- Custom Router (Hash-based) ----------
+        const RouterContext = createContext();
+        function useHashRouter() {
+            const [hash, setHash] = useState(window.location.hash.slice(1) || '/');
+            useEffect(() => {
+                const onHashChange = () => setHash(window.location.hash.slice(1) || '/');
+                window.addEventListener('hashchange', onHashChange);
+                return () => window.removeEventListener('hashchange', onHashChange);
+            }, []);
+            const navigate = (path) => { window.location.hash = path; };
+            return { path: hash, navigate };
+        }
+
+        function Route({ path, element }) {
+            const { path: currentPath } = useContext(RouterContext);
+            // Extract params if path has :param
+            if (path.includes(':')) {
+                const regex = new RegExp('^' + path.replace(/:\w+/g, '([^/]+)') + '$');
+                const match = currentPath.match(regex);
+                if (match) {
+                    const keys = [...path.matchAll(/:\w+/g)].map(m => m[0].slice(1));
+                    const params = {};
+                    keys.forEach((key, i) => { params[key] = match[i+1]; });
+                    return element(params);
+                }
+                return null;
+            }
+            return currentPath === path ? element() : null;
+        }
+
+        // Floating elements (vanilla JS)
         function startFloatingHearts() {
             setInterval(() => {
                 const container = document.querySelector('.floating-hearts');
@@ -166,8 +201,6 @@
                 setTimeout(() => heart.remove(), 8000);
             }, 800);
         }
-
-        // Floating elements (butterflies & flowers)
         function startFloatingElements() {
             setInterval(() => {
                 const container = document.querySelector('.floating-elements');
@@ -183,6 +216,7 @@
             }, 2000);
         }
 
+        // ---------- Components (without React Router) ----------
         function ContactFloatingButton({ wishData }) {
             const [open, setOpen] = useState(false);
             const photo = wishData?.contactPhoto || 'https://via.placeholder.com/50';
@@ -204,7 +238,7 @@
         }
 
         function LoginPage() {
-            const navigate = useNavigate();
+            const { navigate } = useContext(RouterContext);
             const login = async () => {
                 const provider = new firebase.auth.GoogleAuthProvider();
                 try {
@@ -231,11 +265,9 @@
         }
 
         function Dashboard() {
-            const navigate = useNavigate();
+            const { navigate } = useContext(RouterContext);
             const [form, setForm] = useState({
-                birthdayName: 'Natu..',
-                month: 2, day: 15, hour: 0, minute: 0,
-                age: 17,
+                birthdayName: 'Natu..', month: 2, day: 15, hour: 0, minute: 0, age: 17,
                 greetingText: "Hey You Know What! You're the most adorable human i ever met! 💖",
                 reasons: [
                     { text: "You're such a kind and wonderful person...", emoji: "🌟" },
@@ -273,9 +305,7 @@
                     sources: ['local', 'url'],
                     multiple: false,
                 }, (error, result) => {
-                    if (!error && result && result.event === "success") {
-                        callback(result.info.secure_url);
-                    }
+                    if (!error && result && result.event === "success") callback(result.info.secure_url);
                 });
             };
 
@@ -304,6 +334,7 @@
                         <button className="logout-btn" onClick={() => { auth.signOut(); navigate('/'); }}>Logout</button>
                     </div>
                     <div className="form-container">
+                        {/* All form fields same as before, just replace onChange etc. */}
                         <div className="form-group"><label>Birthday Person's Name</label><input name="birthdayName" value={form.birthdayName} onChange={handleChange} /></div>
                         <div className="form-group"><label>Birth Date</label><input type="date" onChange={e => { const d = new Date(e.target.value); setForm(prev => ({...prev, month: d.getMonth(), day: d.getDate()})); }} /><input type="time" onChange={e => { const [h,m] = e.target.value.split(':'); setForm(prev => ({...prev, hour: parseInt(h), minute: parseInt(m)})); }} /></div>
                         <div className="form-group"><label>Age (Candles)</label><input type="number" name="age" value={form.age} onChange={e => setForm(prev => ({...prev, age: parseInt(e.target.value)}))} /></div>
@@ -324,8 +355,7 @@
             );
         }
 
-        function WishPage() {
-            const { wishId } = useParams();
+        function WishPage({ wishId }) {
             const [wishData, setWishData] = useState(null);
             const [loading, setLoading] = useState(true);
             const [currentStep, setCurrentStep] = useState('countdown');
@@ -359,30 +389,25 @@
 
             useEffect(() => {
                 if (currentStep === 'countdown' && wishData?.countdownAudio) {
-                    if (countdownAudioRef.current) { countdownAudioRef.current.pause(); }
+                    if (countdownAudioRef.current) countdownAudioRef.current.pause();
                     countdownAudioRef.current = new Audio(wishData.countdownAudio);
                     countdownAudioRef.current.play().catch(() => {});
                 }
                 if (currentStep === 'greeting' && wishData?.wishAudio) {
-                    if (wishAudioRef.current) { wishAudioRef.current.pause(); }
+                    if (wishAudioRef.current) wishAudioRef.current.pause();
                     wishAudioRef.current = new Audio(wishData.wishAudio);
                     wishAudioRef.current.play().catch(() => {});
                 }
             }, [currentStep, wishData]);
 
-            if (loading) return <div style={{textAlign:'center', marginTop:'100px', fontSize:'24px'}}>Loading your wish page...</div>;
-            if (!wishData) return <div style={{textAlign:'center', marginTop:'100px', fontSize:'24px'}}>Page not found 😢</div>;
+            if (loading) return <div style={{textAlign:'center', marginTop:'100px'}}>Loading...</div>;
+            if (!wishData) return <div style={{textAlign:'center', marginTop:'100px'}}>Page not found</div>;
 
             const openLightbox = (src) => {
-                const lb = document.getElementById('lightbox');
-                const img = document.getElementById('lightboxImg');
-                if (lb && img) { img.src = src; lb.classList.add('show'); }
+                document.getElementById('lightboxImg').src = src;
+                document.getElementById('lightbox').classList.add('show');
             };
-            const closeLightbox = () => {
-                const lb = document.getElementById('lightbox');
-                if (lb) lb.classList.remove('show');
-            };
-
+            const closeLightbox = () => document.getElementById('lightbox').classList.remove('show');
             const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
             return (
@@ -396,9 +421,7 @@
                         <img id="lightboxImg" src="" alt="lightbox" />
                     </div>
 
-                    {currentStep === 'countdown' && (
-                        <CountdownContent wishData={wishData} months={months} />
-                    )}
+                    {currentStep === 'countdown' && <CountdownContent wishData={wishData} months={months} />}
                     {currentStep === 'greeting' && (
                         <div className="greeting-screen show">
                             <h1>Happy Birthday {wishData.birthdayName} ❤️🎂💫</h1>
@@ -416,6 +439,7 @@
             );
         }
 
+        // ---------- Sub-components (unchanged) ----------
         function CountdownContent({ wishData, months }) {
             const [time, setTime] = useState({ days:0, hours:0, mins:0, secs:0 });
             useEffect(() => {
@@ -583,23 +607,23 @@
             );
         }
 
+        // ---------- Main App ----------
         function App() {
+            const router = useHashRouter();
             return (
-                <HashRouter>
-                    <Routes>
-                        <Route path="/" element={<LoginPage />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/wish/:wishId" element={<WishPage />} />
-                    </Routes>
-                </HashRouter>
+                <RouterContext.Provider value={router}>
+                    <Route path="/" element={() => <LoginPage />} />
+                    <Route path="/dashboard" element={() => <Dashboard />} />
+                    <Route path="/wish/:wishId" element={(params) => <WishPage wishId={params.wishId} />} />
+                </RouterContext.Provider>
             );
         }
 
         try {
             const root = ReactDOM.createRoot(document.getElementById('root'));
             root.render(<App />);
-        } catch (error) {
-            document.getElementById('root').innerHTML = '<h1 style="text-align:center; margin-top:100px; color:red;">Error: ' + error.message + '</h1>';
+        } catch (err) {
+            document.getElementById('root').innerHTML = '<h1>Error: ' + err.message + '</h1>';
         }
     </script>
 </body>
